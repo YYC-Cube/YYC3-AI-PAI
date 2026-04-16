@@ -1,15 +1,4 @@
----
-file: README.md
-description: YYC³ AI-PAI 项目总览文档，包含项目介绍、快速开始、架构设计等内容
-author: YanYuCloudCube Team <admin@0379.email>
-version: v1.0.0
-created: 2026-04-08
-updated: 2026-04-08
-status: stable
-tags: [project],[overview],[getting-started],[architecture]
-category: general
-language: zh-CN
----
+# YYC³ AI-PAI
 
 > ***YanYuCloudCube***
 > *言启象限 | 语枢未来*
@@ -20,8 +9,6 @@ language: zh-CN
 ---
 
 <div align="center">
-
-# YYC³ AI-PAI
 
 **下一代AI驱动的智能编程助手**
 
