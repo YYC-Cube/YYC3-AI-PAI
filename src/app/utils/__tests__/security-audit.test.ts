@@ -101,7 +101,8 @@ describe('SecurityAuditLogger', () => {
 
       const events = smallLogger.getEvents()
       expect(events).toHaveLength(5)
-      expect(events[0].action).toBe('Read file 5')
+      expect(events.map((e: { action: string }) => e.action)).toContain('Read file 5')
+      expect(events.map((e: { action: string }) => e.action)).toContain('Read file 9')
     })
   })
 
