@@ -165,7 +165,7 @@ export function IDEMode({ onSwitchMode, onOpenSettings, onOpenNotifications, onO
     recentActions: ["file:select", "code:view", "terminal:execute"],
   }), [selectedFile, editorCode, activeDesignJson]);
 
-d  // ── Icon map for dynamic slot headers ──
+  // ── Icon map for dynamic slot headers ──
   const SLOT_ICON_MAP = useMemo<Record<PanelContentType, React.ElementType>>(() => ({
     'ai-chat': MessageSquare, 'file-explorer': FolderOpen, 'code-editor': Code2,
     'preview': Eye, 'terminal': TerminalIcon,
