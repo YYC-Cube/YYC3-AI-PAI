@@ -66,7 +66,7 @@ describe('intelligent-workflow-store - 初始状态', () => {
   it('should have empty workflows initially', () => {
     const state = useIntelligentWorkflowStore.getState()
 
-    expect(state.workflows.size).toBe(0)
+    expect(useIntelligentWorkflowStore.getState().workflows.size).toBe(0)
     expect(state.workflows).toBeInstanceOf(Map)
   })
 
@@ -148,7 +148,7 @@ describe('intelligent-workflow-store - 工作流管理', () => {
     expect(workflow.name).toBe('Test Workflow')
     expect(workflow.status).toBe('draft')
     expect(workflow.version).toBe(1)
-    expect(state.workflows.size).toBe(1)
+    expect(useIntelligentWorkflowStore.getState().workflows.size).toBe(1)
   })
 
   it('should update workflow', () => {
@@ -169,7 +169,7 @@ describe('intelligent-workflow-store - 工作流管理', () => {
       status: 'ready',
     })
 
-    const updated = state.workflows.get(workflow.id)
+    const updated = useIntelligentWorkflowStore.getState().workflows.get(workflow.id)
     expect(updated).toBeDefined()
     expect(updated?.name).toBe('Updated Name')
     expect(updated?.description).toBe('Updated description')
@@ -189,12 +189,12 @@ describe('intelligent-workflow-store - 工作流管理', () => {
       aiGenerated: false,
     })
 
-    expect(state.workflows.size).toBe(1)
+    expect(useIntelligentWorkflowStore.getState().workflows.size).toBe(1)
 
     state.deleteWorkflow(workflow.id)
 
-    expect(state.workflows.size).toBe(0)
-    expect(state.workflows.get(workflow.id)).toBeUndefined()
+    expect(useIntelligentWorkflowStore.getState().workflows.size).toBe(0)
+    expect(useIntelligentWorkflowStore.getState().workflows.get(workflow.id)).toBeUndefined()
   })
 
   it('should duplicate workflow', () => {
@@ -218,7 +218,7 @@ describe('intelligent-workflow-store - 工作流管理', () => {
     expect(duplicate?.id).not.toBe(original.id)
     expect(duplicate?.name).toBe('Original Workflow (Copy)')
     // 不检查state.workflows.size，因为duplicateWorkflow会创建新workflow
-    const workflows = Array.from(state.workflows.values())
+    const workflows = Array.from(useIntelligentWorkflowStore.getState().workflows.values())
     expect(workflows.some(w => w.name === 'Original Workflow (Copy)')).toBe(true)
   })
 

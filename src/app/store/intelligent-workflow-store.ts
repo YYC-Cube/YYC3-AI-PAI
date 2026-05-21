@@ -519,10 +519,11 @@ export const useIntelligentWorkflowStore = create<IntelligentWorkflowStoreState 
     },
 
     cancelWorkflow: (workflowId) => {
-      const workflow = get().workflows.get(workflowId)
-      if (!workflow) return
+      if (!get().workflows.has(workflowId)) return
 
       set((state) => {
+        const workflow = state.workflows.get(workflowId)
+        if (!workflow) return
         workflow.status = 'cancelled'
         workflow.endedAt = Date.now()
         if (state.executingWorkflowId === workflowId) {

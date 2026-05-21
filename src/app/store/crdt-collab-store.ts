@@ -317,31 +317,25 @@ export const useCRDTCollabStore = create<CollabState & CollabStoreActions>()(
 
     // 更新用户光标位置
     updateCursor: (file, line, column) => {
-      const state = get()
-      const users = state.users
-
-      // 更新当前用户的光标位置
-      const currentUser = users.get(state.userId)
-      if (currentUser) {
-        currentUser.cursor = { file, line, column }
-        currentUser.lastSeen = Date.now()
-      } else {
-        users.set(state.userId, {
-          id: state.userId,
-          name: state.userName,
-          color: state.userColor,
-          cursor: { file, line, column },
-          online: true,
-          lastSeen: Date.now(),
-        })
-      }
+      const currentState = get()
+      const userId = currentState.userId
 
       set((state) => {
-        state.users = new Map(users)
+        const currentUser = state.users.get(userId)
+        if (currentUser) {
+          currentUser.cursor = { file, line, column }
+          currentUser.lastSeen = Date.now()
+        } else {
+          state.users.set(userId, {
+            id: userId,
+            name: currentState.userName,
+            color: currentState.userColor,
+            cursor: { file, line, column },
+            online: true,
+            lastSeen: Date.now(),
+          })
+        }
       })
-
-      // 广播光标位置（需要实际实现）
-      // 这里应该是通过provider广播光标位置
     },
 
     // 获取文档内容

@@ -93,19 +93,19 @@ interface PreviewState {
   /** Whether console panel is visible */
   consoleVisible: boolean
   /** Console entries */
-  _consoleEntries: ConsoleEntry[]
+  consoleEntries: ConsoleEntry[]
   /** Preview _history snapshots */
   _history: PreviewSnapshot[]
   /** Current _history index (-1 = latest) */
-  _historyIndex: number
+  historyIndex: number
   /** Max _history entries */
   maxHistory: number
   /** Current preview _error */
   _error: PreviewError | null
   /** Whether preview is currently updating */
-  _isUpdating: boolean
+  isUpdating: boolean
   /** Last update timestamp */
-  _lastUpdateTime: number
+  lastUpdateTime: number
   /** Show device frame chrome */
   showDeviceFrame: boolean
   /** Show responsive grid lines */
@@ -115,7 +115,7 @@ interface PreviewState {
   /** Preview orientation: portrait or landscape */
   orientation: 'portrait' | 'landscape'
   /** 对齐 Guidelines: Performance Analysis — iframe 渲染耗时(ms) */
-  _renderTime: number
+  renderTime: number
   /** 对齐 Guidelines: Breakpoint Preview — 是否显示断点标尺 */
   showBreakpointRuler: boolean
   /** 对齐 Guidelines: Multi-Device Preview — 是否启用多设备并排预览 */
@@ -141,7 +141,7 @@ function loadSettings(): Partial<PreviewState> {
 
 function saveSettings(s: PreviewState) {
   try {
-    const { _consoleEntries, _history, _historyIndex, _error, _isUpdating, _lastUpdateTime, _renderTime, ...persist } = s
+    const { consoleEntries, history, historyIndex, error, isUpdating, lastUpdateTime, renderTime, ...persist } = s
     localStorage.setItem(LS_KEY, JSON.stringify(persist))
   } catch { /* ignore */ }
 }

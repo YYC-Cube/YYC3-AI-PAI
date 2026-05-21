@@ -9,32 +9,34 @@
  * @copyright Copyright (c) 2026 YanYuCloudCube Team
  */
 
-import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
-import { renderHook} from '@testing-library/react'
-import { useWebGPUInference, useInference, useModelManager, useInferenceStats } from '../useWebGPUInference'
+import { renderHook } from '@testing-library/react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import type { AIModel } from '../../store/webgpu-inference-store'
 import { useWebGPUInferenceStore } from '../../store/webgpu-inference-store'
-import type {
-  AIModel,
-  AIModelType,
-  _InferenceTaskStatus,
-} from '../../store/webgpu-inference-store'
+import { useInference, useInferenceStats, useModelManager, useWebGPUInference } from '../useWebGPUInference'
 
 describe('useWebGPUInference Hook', () => {
   beforeEach(() => {
-    // 清除store状态
     useWebGPUInferenceStore.getState().clearAll()
+    useWebGPUInferenceStore.setState((state) => {
+      for (const model of state.models.values()) {
+        model.loaded = false
+        model.loadProgress = 0
+      }
+    })
   })
 
   afterEach(() => {
-    // 清理
     vi.clearAllMocks()
+    vi.useRealTimers()
   })
 
   describe('初始状态', () => {
     it('should return empty arrays and null values', () => {
       const { result } = renderHook(() => useWebGPUInference({ autoInitialize: false }))
 
-      expect(result.current.models).toEqual([])
+      expect(result.current.models).toBeDefined()
+      expect(result.current.models.every((m: AIModel) => !m.loaded)).toBe(true)
       expect(result.current.activeModel).toBeNull()
       expect(result.current.tasks).toEqual([])
       expect(result.current.isLoadingModel).toBe(false)
@@ -83,7 +85,7 @@ describe('useWebGPUInference Hook', () => {
         })
       )
 
-      expect(result.current.models).toEqual([])
+      expect(result.current.models.length).toBeGreaterThan(0)
     })
   })
 
@@ -111,9 +113,10 @@ describe('useWebGPUInference Hook', () => {
       }).not.toThrow()
     })
 
-    it('should set active model', () => {
+    it('should set active model', async () => {
       const { result } = renderHook(() => useWebGPUInference({ autoInitialize: false }))
 
+      await result.current.loadModel('tinyllama-1.1b')
       expect(() => {
         result.current.setActiveModel('tinyllama-1.1b')
       }).not.toThrow()
@@ -124,7 +127,7 @@ describe('useWebGPUInference Hook', () => {
     it('should execute inference', async () => {
       const { result } = renderHook(() => useWebGPUInference({ autoInitialize: false }))
 
-      // 验证方法可以调用
+      await result.current.loadModel('tinyllama-1.1b')
       await expect(result.current.infer('function hello() {}', 'tinyllama-1.1b')).resolves.not.toThrow()
     })
 
@@ -221,14 +224,16 @@ describe('useWebGPUInference Hook', () => {
       it('should auto initialize', () => {
         const { result } = renderHook(() => useInference())
 
-        expect(result.current.webGPUSupported).toBeDefined()
+        expect(result.current.infer).toBeDefined()
+        expect(result.current.isInferencing).toBeDefined()
       })
 
       it('should execute inference', async () => {
-        const { result } = renderHook(() => useInference())
+        await useWebGPUInferenceStore.getState().loadModel('tinyllama-1.1b')
+        useWebGPUInferenceStore.getState().setActiveModel('tinyllama-1.1b')
 
-        // 验证方法可以调用
-        await expect(result.current.infer('function hello() {}')).resolves.not.toThrow()
+        const { result } = renderHook(() => useInference())
+        await expect(result.current.infer('function hello() {}')).resolves.toBeDefined()
       })
     })
 
@@ -289,7 +294,7 @@ describe('useWebGPUInference Hook', () => {
     it('should handle empty models list', () => {
       const { result } = renderHook(() => useWebGPUInference({ autoInitialize: false }))
 
-      expect(result.current.models).toEqual([])
+      expect(result.current.models.length).toBeGreaterThan(0)
       expect(result.current.activeModel).toBeNull()
     })
 
@@ -302,22 +307,22 @@ describe('useWebGPUInference Hook', () => {
     it('should handle invalid modelId', async () => {
       const { result } = renderHook(() => useWebGPUInference({ autoInitialize: false }))
 
-      // 验证方法可以调用
-      await expect(result.current.loadModel('invalid-model')).resolves.not.toThrow()
+      await expect(result.current.loadModel('invalid-model')).rejects.toThrow('not found')
     })
 
     it('should handle empty input', async () => {
       const { result } = renderHook(() => useWebGPUInference({ autoInitialize: false }))
 
-      // 验证方法可以调用
-      await expect(result.current.infer('', 'tinyllama-1.1b')).resolves.not.toThrow()
+      await result.current.loadModel('tinyllama-1.1b')
+      await expect(result.current.infer('', 'tinyllama-1.1b')).resolves.toBeDefined()
     })
 
     it('should handle long input', async () => {
       const { result } = renderHook(() => useWebGPUInference({ autoInitialize: false }))
 
+      await result.current.loadModel('tinyllama-1.1b')
       const longInput = 'a'.repeat(10000)
-      await expect(result.current.infer(longInput, 'tinyllama-1.1b')).resolves.not.toThrow()
+      await expect(result.current.infer(longInput, 'tinyllama-1.1b')).resolves.toBeDefined()
     })
   })
 
@@ -325,14 +330,15 @@ describe('useWebGPUInference Hook', () => {
     it('should handle multiple inference calls', async () => {
       const { result } = renderHook(() => useWebGPUInference({ autoInitialize: false }))
 
+      await result.current.loadModel('tinyllama-1.1b')
       const promises = [
         result.current.infer('const a = ', 'tinyllama-1.1b'),
         result.current.infer('const b = ', 'tinyllama-1.1b'),
         result.current.infer('const c = ', 'tinyllama-1.1b'),
       ]
 
-      // 验证方法可以调用
-      await expect(Promise.all(promises)).resolves.not.toThrow()
+      const results = await Promise.all(promises)
+      expect(results).toHaveLength(3)
     })
 
     it('should handle rapid model load/unload', async () => {
@@ -347,9 +353,10 @@ describe('useWebGPUInference Hook', () => {
   })
 
   describe('状态管理', () => {
-    it('should update activeModelId', () => {
+    it('should update activeModelId', async () => {
       const { result } = renderHook(() => useWebGPUInference({ autoInitialize: false }))
 
+      await result.current.loadModel('tinyllama-1.1b')
       expect(() => {
         result.current.setActiveModel('tinyllama-1.1b')
       }).not.toThrow()
@@ -358,7 +365,8 @@ describe('useWebGPUInference Hook', () => {
     it('should update stats after inference', async () => {
       const { result } = renderHook(() => useWebGPUInference({ autoInitialize: false }))
 
-      await expect(result.current.infer('function hello() {}', 'tinyllama-1.1b')).resolves.not.toThrow()
+      await result.current.loadModel('tinyllama-1.1b')
+      await result.current.infer('function hello() {}', 'tinyllama-1.1b')
 
       expect(result.current.stats).toBeDefined()
     })

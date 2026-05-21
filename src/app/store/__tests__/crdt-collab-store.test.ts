@@ -17,54 +17,53 @@ import { useCRDTCollabStore } from '../crdt-collab-store'
 // 启用Immer的MapSet支持
 enableMapSet()
 
-// Mock Yjs相关依赖
-class MockDoc {
-  private _content = ''
-
-  getText() {
-    return {
-      toString: () => this._content,
-      insert: (index: number, content: string) => {
-        this._content = content
-      },
-      delete: (_index: number, _length: number) => {
-        this._content = ''
-      },
+vi.mock('yjs', () => {
+  class MockDoc {
+    _content = ''
+    getText() {
+      return {
+        toString: () => this._content,
+        insert: (_index: number, content: string) => { this._content = content },
+        delete: (_index: number, _length: number) => { this._content = '' },
+        length: 0,
+      }
     }
+    transact = (fn: () => void) => fn()
+    getMap = () => new Map()
+    getArray = () => ({ toArray: () => [], observe: () => { } })
+    destroy = () => { }
   }
-
-  transact(callback: () => void) {
-    callback()
+  return {
+    __esModule: true,
+    default: {},
+    Doc: function () { return new MockDoc() },
   }
+})
 
-  destroy() { }
-}
-
-vi.mock('yjs', () => ({
-  Doc: vi.fn().mockImplementation(() => new MockDoc()),
-}))
 
 vi.mock('y-websocket', () => ({
-  WebsocketProvider: vi.fn().mockImplementation(() => ({
-    on: vi.fn(),
-    disconnect: vi.fn(),
-    destroy: vi.fn(),
-  })),
+  WebsocketProvider: vi.fn(function () {
+    this.on = vi.fn()
+    this.disconnect = vi.fn()
+    this.destroy = vi.fn()
+  }),
 }))
 
 vi.mock('y-webrtc', () => ({
-  WebrtcProvider: vi.fn().mockImplementation(() => ({
-    on: vi.fn(),
-    disconnect: vi.fn(),
-    destroy: vi.fn(),
-  })),
+  WebrtcProvider: vi.fn(function () {
+    this.on = vi.fn()
+    this.disconnect = vi.fn()
+    this.destroy = vi.fn()
+  }),
 }))
 
 vi.mock('y-indexeddb', () => ({
-  IndexeddbPersistence: vi.fn().mockImplementation(() => ({
-    on: vi.fn(),
-    destroy: vi.fn(),
-  })),
+  IndexeddbPersistence: vi.fn(function (this: any) {
+    this.on = vi.fn((event: string, cb: () => void) => {
+      if (event === 'synced' || event === 'load') cb()
+    })
+    this.destroy = vi.fn()
+  }),
 }))
 
 // Mock localStorage
@@ -635,13 +634,14 @@ describe('useCRDTCollabStore', () => {
       expect(updated.userName).toBe('')
     })
 
-    it('should handle very long document content', () => {
+    it('should handle very long document content', async () => {
       const state = useCRDTCollabStore.getState()
 
+      await state.createDocument('doc-long', 'Long Doc')
       const longContent = 'x'.repeat(100000)
-      state.updateDocumentContent('doc-1', longContent)
+      state.updateDocumentContent('doc-long', longContent)
 
-      const content = state.getDocumentContent('doc-1')
+      const content = state.getDocumentContent('doc-long')
       expect(content).toBe(longContent)
     })
   })
@@ -691,13 +691,12 @@ describe('useCRDTCollabStore', () => {
       }
     })
 
-    it('should handle rapid document content updates', () => {
+    it('should handle rapid document content updates', async () => {
       const state = useCRDTCollabStore.getState()
 
-      // 由于需要先创建文档，而这个操作在当前mock下可能失败
-      // 我们验证方法可以调用
+      await state.createDocument('doc-rapid', 'Rapid Doc')
       expect(() => {
-        state.updateDocumentContent('doc-1', `Content ${Math.floor(Math.random() * 100)}`)
+        state.updateDocumentContent('doc-rapid', `Content ${Math.floor(Math.random() * 100)}`)
       }).not.toThrow()
     })
   })

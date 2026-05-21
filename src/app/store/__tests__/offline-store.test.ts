@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 // Mock localStorage
 const lsMock = (() => {
@@ -10,7 +10,7 @@ const lsMock = (() => {
     clear: vi.fn(() => { store = {} }),
   }
 })()
-Object.defineProperty(globalThis, 'localStorage', { value: lsMock })
+Object.defineProperty(globalThis, 'localStorage', { value: lsMock, configurable: true })
 
 // Mock navigator.onLine
 const _mockOnLine = true
@@ -61,7 +61,7 @@ describe('Cache Management', () => {
       ttl: 3600000,
     })
     // Verify via persistence
-    const _calls = lsMock.setItem.mock._calls.filter((c: string[]) => c[0] === 'yyc3_offline_store')
+    const _calls = lsMock.setItem.mock.calls.filter((c: string[]) => c[0] === 'yyc3_offline_store')
     expect(_calls.length).toBeGreaterThan(0)
     const parsed = JSON.parse(_calls[_calls.length - 1][1])
     expect(parsed.cacheEntries.some((e: CacheEntry) => e.key === 'test/file.js')).toBe(true)
@@ -82,7 +82,7 @@ describe('Cache Management', () => {
       timestamp: Date.now(),
       ttl: 3600000,
     })
-    const _calls = lsMock.setItem.mock._calls.filter((c: string[]) => c[0] === 'yyc3_offline_store')
+    const _calls = lsMock.setItem.mock.calls.filter((c: string[]) => c[0] === 'yyc3_offline_store')
     const parsed = JSON.parse(_calls[_calls.length - 1][1])
     const entry = parsed.cacheEntries.find((e: CacheEntry) => e.key === 'dupe/file.js')
     expect(entry).toBeDefined()
@@ -99,7 +99,7 @@ describe('Cache Management', () => {
     })
     offlineStoreActions.accessCache('access/test.css')
     offlineStoreActions.accessCache('access/test.css')
-    const _calls = lsMock.setItem.mock._calls.filter((c: string[]) => c[0] === 'yyc3_offline_store')
+    const _calls = lsMock.setItem.mock.calls.filter((c: string[]) => c[0] === 'yyc3_offline_store')
     const parsed = JSON.parse(_calls[_calls.length - 1][1])
     const entry = parsed.cacheEntries.find((e: CacheEntry) => e.key === 'access/test.css')
     expect(entry).toBeDefined()
@@ -115,7 +115,7 @@ describe('Cache Management', () => {
       ttl: 3600000,
     })
     offlineStoreActions.removeCacheEntry('to-remove.js')
-    const _calls = lsMock.setItem.mock._calls.filter((c: string[]) => c[0] === 'yyc3_offline_store')
+    const _calls = lsMock.setItem.mock.calls.filter((c: string[]) => c[0] === 'yyc3_offline_store')
     const parsed = JSON.parse(_calls[_calls.length - 1][1])
     expect(parsed.cacheEntries.some((e: CacheEntry) => e.key === 'to-remove.js')).toBe(false)
   })
@@ -128,7 +128,7 @@ describe('Cache Management', () => {
       key: 'b.js', category: 'file-version', sizeBytes: 200, timestamp: Date.now(), ttl: 3600000,
     })
     offlineStoreActions.clearAllCache()
-    const _calls = lsMock.setItem.mock._calls.filter((c: string[]) => c[0] === 'yyc3_offline_store')
+    const _calls = lsMock.setItem.mock.calls.filter((c: string[]) => c[0] === 'yyc3_offline_store')
     const parsed = JSON.parse(_calls[_calls.length - 1][1])
     expect(parsed.cacheEntries.length).toBe(0)
   })
@@ -141,7 +141,7 @@ describe('Cache Management', () => {
       key: 'remove.json', category: 'ai-response', sizeBytes: 200, timestamp: Date.now(), ttl: 3600000,
     })
     offlineStoreActions.clearCacheByCategory('ai-response')
-    const _calls = lsMock.setItem.mock._calls.filter((c: string[]) => c[0] === 'yyc3_offline_store')
+    const _calls = lsMock.setItem.mock.calls.filter((c: string[]) => c[0] === 'yyc3_offline_store')
     const parsed = JSON.parse(_calls[_calls.length - 1][1])
     expect(parsed.cacheEntries.some((e: CacheEntry) => e.key === 'keep.js')).toBe(true)
     expect(parsed.cacheEntries.some((e: CacheEntry) => e.key === 'remove.json')).toBe(false)
@@ -163,7 +163,7 @@ describe('Cache Management', () => {
       ttl: 3600000,
     })
     offlineStoreActions.cleanExpiredCache()
-    const _calls = lsMock.setItem.mock._calls.filter((c: string[]) => c[0] === 'yyc3_offline_store')
+    const _calls = lsMock.setItem.mock.calls.filter((c: string[]) => c[0] === 'yyc3_offline_store')
     const parsed = JSON.parse(_calls[_calls.length - 1][1])
     expect(parsed.cacheEntries.some((e: CacheEntry) => e.key === 'expired.js')).toBe(false)
     expect(parsed.cacheEntries.some((e: CacheEntry) => e.key === 'fresh.js')).toBe(true)
@@ -171,7 +171,7 @@ describe('Cache Management', () => {
 
   it('setMaxCacheSize should update limit', () => {
     offlineStoreActions.setMaxCacheSize(100 * 1024 * 1024) // 100MB
-    const _calls = lsMock.setItem.mock._calls.filter((c: string[]) => c[0] === 'yyc3_offline_store')
+    const _calls = lsMock.setItem.mock.calls.filter((c: string[]) => c[0] === 'yyc3_offline_store')
     const parsed = JSON.parse(_calls[_calls.length - 1][1])
     expect(parsed.maxCacheSize).toBe(100 * 1024 * 1024)
   })
@@ -191,7 +191,7 @@ describe('Cache Management', () => {
       timestamp: Date.now(), ttl: 9999999,
     })
     // Total would be 600 > 500, so LRU should evict 'old.js'
-    const _calls = lsMock.setItem.mock._calls.filter((c: string[]) => c[0] === 'yyc3_offline_store')
+    const _calls = lsMock.setItem.mock.calls.filter((c: string[]) => c[0] === 'yyc3_offline_store')
     const parsed = JSON.parse(_calls[_calls.length - 1][1])
     const _keys = parsed.cacheEntries.map((e: CacheEntry) => e.key)
     // At least one should have been evicted to stay under 500
@@ -208,8 +208,8 @@ describe('Sync Queue', () => {
 
   it('addToSyncQueue should add a pending item', () => {
     offlineStoreActions.addToSyncQueue('create', 'files/new.ts', { content: 'hello' })
-    const _calls = lsMock.setItem.mock._calls.filter((c: string[]) => c[0] === 'yyc3_offline_store')
-    const parsed = JSON.parse(_calls[calls.length - 1][1])
+    const _calls = lsMock.setItem.mock.calls.filter((c: string[]) => c[0] === 'yyc3_offline_store')
+    const parsed = JSON.parse(_calls[_calls.length - 1][1])
     const pending = parsed.syncQueue.filter((q: SyncQueueItem) => q.status === 'pending' || q.status === 'syncing')
     expect(pending.length).toBeGreaterThanOrEqual(1)
     expect(pending[0].action).toBe('create')

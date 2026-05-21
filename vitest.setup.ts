@@ -15,24 +15,26 @@ const IDBRequestMock = {
   onupgradeneeded: null,
 }
 
+function createIDBRequest(result?: any) {
+  const req = { result: result ?? null, onsuccess: null as (() => void) | null, onerror: null as (() => void) | null }
+  setTimeout(() => req.onsuccess?.({ target: req } as any), 0)
+  return req
+}
+
 function createIDBObjectStore() {
   return {
-    put: vi.fn(),
-    get: vi.fn(() => {
-      const req = { result: undefined, onsuccess: null, onerror: null }
-      setTimeout(() => req.onsuccess?.({ target: req } as any), 0)
-      return req
-    }),
-    getAll: vi.fn(() => Promise.resolve([])),
-    getAllKeys: vi.fn(() => Promise.resolve([])),
-    delete: vi.fn(),
-    clear: vi.fn(),
-    count: vi.fn(() => Promise.resolve(0)),
+    put: vi.fn(() => createIDBRequest()),
+    get: vi.fn(() => createIDBRequest(undefined)),
+    getAll: vi.fn(() => createIDBRequest([])),
+    getAllKeys: vi.fn(() => createIDBRequest([])),
+    delete: vi.fn(() => createIDBRequest()),
+    clear: vi.fn(() => createIDBRequest()),
+    count: vi.fn(() => createIDBRequest(0)),
     createIndex: vi.fn(),
     index: vi.fn(() => ({
-      get: vi.fn(() => Promise.resolve(undefined)),
-      getAll: vi.fn(() => Promise.resolve([])),
-      getAllKeys: vi.fn(() => Promise.resolve([])),
+      get: vi.fn(() => createIDBRequest(undefined)),
+      getAll: vi.fn(() => createIDBRequest([])),
+      getAllKeys: vi.fn(() => createIDBRequest([])),
     })),
   }
 }
@@ -167,6 +169,6 @@ class MockBroadcastChannel {
 globalThis.BroadcastChannel = MockBroadcastChannel as unknown as typeof BroadcastChannel
 
 afterEach(() => {
-  localStorage.clear()
-  sessionStorage.clear()
+  try { localStorage.clear() } catch {}
+  try { sessionStorage.clear() } catch {}
 })

@@ -8,17 +8,61 @@
  * @copyright Copyright (c) 2026 YanYuCloudCube Team
  */
 
-import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
-import { renderHook, act, waitFor } from '@testing-library/react'
+import { act, renderHook, waitFor } from '@testing-library/react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+
+vi.mock('yjs', () => {
+  class MockDoc {
+    _content = ''
+    getText() {
+      return {
+        toString: () => this._content,
+        insert: (_index: number, content: string) => { this._content = content },
+        delete: (_index: number, _length: number) => { this._content = '' },
+        length: 0,
+      }
+    }
+    transact = (fn: () => void) => fn()
+    getMap = () => new Map()
+    getArray = () => ({ toArray: () => [], observe: () => { } })
+    destroy = () => { }
+  }
+  return { __esModule: true, default: {}, Doc: function () { return new MockDoc() } }
+})
+
+vi.mock('y-websocket', () => ({
+  WebsocketProvider: vi.fn(function (this: any) {
+    this.on = vi.fn()
+    this.disconnect = vi.fn()
+    this.destroy = vi.fn()
+  }),
+}))
+
+vi.mock('y-webrtc', () => ({
+  WebrtcProvider: vi.fn(function (this: any) {
+    this.on = vi.fn()
+    this.disconnect = vi.fn()
+    this.destroy = vi.fn()
+  }),
+}))
+
+vi.mock('y-indexeddb', () => ({
+  IndexeddbPersistence: vi.fn(function (this: any) {
+    this.on = vi.fn((event: string, cb: () => void) => {
+      if (event === 'synced' || event === 'load') cb()
+    })
+    this.destroy = vi.fn()
+  }),
+}))
+
+import { useCRDTCollabStore } from '../../store/crdt-collab-store'
 import {
   useCRDTCollab,
-  useDocumentManager,
-  useUserManager,
   useConnectionManager,
   useCursorTracking,
+  useDocumentManager,
+  useUserManager,
 } from '../useCRDTCollab'
-import { useCRDTCollabStore } from '../../store/crdt-collab-store'
-import type { CollabConnectionType } from '../../store/crdt-collab-store'
 
 describe('useCRDTCollab', () => {
   beforeEach(() => {
@@ -113,7 +157,7 @@ describe('useCRDTCollab', () => {
     it('should support defaultConnectionType option', () => {
       const { result } = renderHook(() => useCRDTCollab({ defaultConnectionType: 'websocket' }))
 
-      expect(result.current.connectionType).toBe('none') // 初始值，useEffect会更新
+      expect(result.current.connectionType).toBe('websocket')
     })
   })
 
