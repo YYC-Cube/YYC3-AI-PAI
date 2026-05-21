@@ -19,6 +19,7 @@ import {
   type Workflow,
   type WorkflowExecutionEvent,
   type WorkflowNode,
+  type WorkflowNodeStatus,
   type WorkflowStatus
 } from '../store/intelligent-workflow-store'
 
@@ -103,6 +104,14 @@ export interface UseIntelligentWorkflowReturn {
   // ===== 统计信息 =====
   /** 获取统计信息 */
   stats: ReturnType<typeof useIntelligentWorkflowStore.getState>['stats']
+
+  // ===== 辅助工具 =====
+  /** 按状态分组的工作流 */
+  workflowsByStatus: Record<WorkflowStatus, Workflow[]>
+  /** 格式化持续时间 */
+  formatDuration: (ms: number) => string
+  /** 获取状态颜色 */
+  getStatusColor: (status: WorkflowStatus | WorkflowNodeStatus) => string
 }
 
 /**
@@ -197,7 +206,7 @@ export function useIntelligentWorkflow(
     executionEvents,
     naturalLanguageInputs,
     workflowTemplates,
-    _learnedOptimizations,
+    learnedOptimizations,
     stats,
     createWorkflow,
     updateWorkflow,
@@ -278,7 +287,7 @@ export function useIntelligentWorkflow(
       cancelled: [],
     }
     workflows.forEach((workflow) => {
-      groups[workflow.status].push(workflow)
+      groups[workflow.status as WorkflowStatus].push(workflow)
     })
     return groups
   }, [workflows])
@@ -291,8 +300,8 @@ export function useIntelligentWorkflow(
   }
 
   // 格式化状态
-  const getStatusColor = (status: WorkflowStatus): string => {
-    const colors: Record<WorkflowStatus, string> = {
+  const getStatusColor = (status: WorkflowStatus | WorkflowNodeStatus): string => {
+    const colors: Record<string, string> = {
       draft: '#94a3b8',
       ready: '#22c55e',
       running: '#eab308',
@@ -300,8 +309,10 @@ export function useIntelligentWorkflow(
       completed: '#10b981',
       failed: '#ef4444',
       cancelled: '#6b7280',
+      pending: '#94a3b8',
+      skipped: '#6b7280',
     }
-    return colors[status]
+    return colors[status] ?? '#94a3b8'
   }
 
   // 自动初始化

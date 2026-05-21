@@ -42,7 +42,7 @@ vi.mock('yjs', () => {
 
 
 vi.mock('y-websocket', () => ({
-  WebsocketProvider: vi.fn(function () {
+  WebsocketProvider: vi.fn(function (this: any) {
     this.on = vi.fn()
     this.disconnect = vi.fn()
     this.destroy = vi.fn()
@@ -50,7 +50,7 @@ vi.mock('y-websocket', () => ({
 }))
 
 vi.mock('y-webrtc', () => ({
-  WebrtcProvider: vi.fn(function () {
+  WebrtcProvider: vi.fn(function (this: any) {
     this.on = vi.fn()
     this.disconnect = vi.fn()
     this.destroy = vi.fn()
@@ -84,7 +84,7 @@ const localStorageMock = (() => {
   }
 })()
 
-Object.defineProperty(global, 'localStorage', {
+Object.defineProperty(globalThis, 'localStorage', {
   value: localStorageMock,
 })
 

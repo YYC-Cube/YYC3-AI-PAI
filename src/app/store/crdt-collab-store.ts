@@ -11,12 +11,32 @@
  * @tags store,crdt,yjs,collaboration,realtime
  */
 
+import { IndexeddbPersistence } from 'y-indexeddb'
+import { WebrtcProvider } from 'y-webrtc'
+import { WebsocketProvider } from 'y-websocket'
+import * as Y from 'yjs'
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
-import * as Y from 'yjs'
-import { WebsocketProvider } from 'y-websocket'
-import { WebrtcProvider } from 'y-webrtc'
-import { IndexeddbPersistence } from 'y-indexeddb'
+
+// ============================================================================
+// 扩展类型定义
+// ============================================================================
+
+/**
+ * 扩展的WebSocket Provider接口
+ */
+interface ExtendedWebsocketProvider extends WebsocketProvider {
+  on(event: 'error', callback: (error: Error) => void): void
+  on(event: 'status', callback: (status: { status: string }) => void): void
+}
+
+/**
+ * 扩展的WebRTC Provider接口
+ */
+interface ExtendedWebrtcProvider extends WebrtcProvider {
+  on(event: 'peers', callback: (peers: Array<{ clientID: string }>) => void): void
+  on(event: 'sync', callback: (synced: boolean) => void): void
+}
 
 /**
  * 协作连接类型
@@ -122,6 +142,12 @@ interface CollabStoreActions {
   getUsers: () => CollabUser[]
   /** 清除所有数据 */
   clearAll: () => void
+  /** WebSocket连接 */
+  connectWebSocket: () => Promise<void>
+  /** WebRTC连接 */
+  connectWebRTC: () => Promise<void>
+  /** 断开连接 */
+  disconnect: () => Promise<void>
 }
 
 /**
@@ -400,13 +426,12 @@ export const useCRDTCollabStore = create<CollabState & CollabStoreActions>()(
       // 为每个文档创建WebSocket Provider
       for (const [docId, doc] of state.documents) {
         const wsProvider = new WebsocketProvider(
-          'ws://localhost:1234', // WebSocket服务器地址
+          'ws://localhost:1234',
           docId,
-          doc.doc,
+          doc.doc as Y.Doc,
           {
             connect: true,
             awareness: {
-              // 用户信息
               user: {
                 id: state.userId,
                 name: state.userName,
@@ -428,13 +453,13 @@ export const useCRDTCollabStore = create<CollabState & CollabStoreActions>()(
           })
         })
 
-        wsProvider.on('error', (error: Error) => {
-          console.error(`[CRDT] WebSocket error for ${docId}:`, error)
-          set((s) => {
-            s.connectionStatus = 'error'
-            s.error = error.message
+          ; (wsProvider as ExtendedWebsocketProvider).on('error', (error: Error) => {
+            console.error(`[CRDT] WebSocket error for ${docId}:`, error)
+            set((s) => {
+              s.connectionStatus = 'error'
+              s.error = error.message
+            })
           })
-        })
 
         // 更新文档provider
         set((s) => {
@@ -452,52 +477,51 @@ export const useCRDTCollabStore = create<CollabState & CollabStoreActions>()(
 
       // 为每个文档创建WebRTC Provider
       for (const [docId, doc] of state.documents) {
-        const rtcProvider = new WebrtcProvider(docId, doc.doc, {
-          signaling: ['wss://signaling.yyc3.io'], // 信令服务器地址
-          maxConns: 20 + Math.floor(Math.random() * 10), // 最大连接数
-          filterBridgedConns: true, // 过滤桥接连接
-          peerOpts: {}, // WebRTC配置
+        const rtcProvider = new WebrtcProvider(docId, doc.doc as Y.Doc, {
+          signaling: ['wss://signaling.yyc3.io'],
+          maxConns: 20 + Math.floor(Math.random() * 10),
+          filterBcConns: true,
+          peerOpts: {},
         })
 
-        rtcProvider.on('peers', (peers: Array<{ clientID: string }>) => {
-          console.warn(`[CRDT] WebRTC peers for ${docId}:`, peers.length)
-          set((s) => {
-            s.connectionStatus = peers.length > 0 ? 'connected' : 'connecting'
-            s.connected = peers.length > 0
-          })
+          ; (rtcProvider as ExtendedWebrtcProvider).on('peers', (peers: Array<{ clientID: string }>) => {
+            console.warn(`[CRDT] WebRTC peers for ${docId}:`, peers.length)
+            set((s) => {
+              s.connectionStatus = peers.length > 0 ? 'connected' : 'connecting'
+              s.connected = peers.length > 0
 
-          // 更新用户列表
-          const users = new Map<string, CollabUser>()
-          users.set(state.userId, {
-            id: state.userId,
-            name: state.userName,
-            color: state.userColor,
-            online: true,
-            lastSeen: Date.now(),
-          })
+              const users = new Map<string, CollabUser>()
+              users.set(state.userId, {
+                id: state.userId,
+                name: state.userName,
+                color: state.userColor,
+                online: true,
+                lastSeen: Date.now(),
+              })
 
-          peers.forEach((peer) => {
-            users.set(peer.clientID, {
-              id: peer.clientID,
-              name: `Peer-${peer.clientID.substr(0, 6)}`,
-              color: getRandomUserColor(),
-              online: true,
-              lastSeen: Date.now(),
+              peers.forEach((peer) => {
+                users.set(peer.clientID, {
+                  id: peer.clientID,
+                  name: `Peer-${peer.clientID.substr(0, 6)}`,
+                  color: getRandomUserColor(),
+                  online: true,
+                  lastSeen: Date.now(),
+                })
+              })
+
+              s.users = users
             })
           })
 
-          s.users = users
-        })
-
-        rtcProvider.on('sync', (synced: boolean) => {
-          console.warn(`[CRDT] WebRTC synced for ${docId}:`, synced)
-          set((s) => {
-            const d = s.documents.get(docId)
-            if (d) {
-              d.synced = synced
-            }
+          ; (rtcProvider as ExtendedWebrtcProvider).on('sync', (synced: boolean) => {
+            console.warn(`[CRDT] WebRTC synced for ${docId}:`, synced)
+            set((s) => {
+              const d = s.documents.get(docId)
+              if (d) {
+                d.synced = synced
+              }
+            })
           })
-        })
 
         // 更新文档provider
         set((s) => {

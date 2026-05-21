@@ -11,19 +11,17 @@
  * @tags component,performance,profiling,react-profiler
  */
 
-import { Profiler, ProfilerProps } from 'react'
+import { Profiler } from 'react'
 import { usePerformanceStore } from '../store/performance-store'
 
 /**
  * 性能监控组件属性
  */
-export interface PerformanceMonitorProps extends Omit<ProfilerProps, 'onRender'> {
-  /** 监控的组件名称 */
+export interface PerformanceMonitorProps {
   name: string
-  /** 是否启用 */
   enabled?: boolean
-  /** 慢组件阈值 (ms) */
   slowComponentThreshold?: number
+  children: React.ReactNode
 }
 
 /**
@@ -66,13 +64,12 @@ export function PerformanceMonitor({
   enabled = true,
   slowComponentThreshold = 16,
   children,
-  ...props
 }: PerformanceMonitorProps) {
   const recordComponentRender = usePerformanceStore((state) => state.recordComponentRender)
 
   const handleRender = (
-    id: string,
-    phase: 'mount' | 'update',
+    _id: string,
+    phase: 'mount' | 'update' | 'nested-update',
     actualDuration: number,
     baseDuration: number,
     startTime: number,
@@ -112,7 +109,7 @@ export function PerformanceMonitor({
   }
 
   return (
-    <Profiler id={name} onRender={handleRender} {...props}>
+    <Profiler id={name} onRender={handleRender}>
       {children}
     </Profiler>
   )

@@ -11,12 +11,12 @@
  * @tags hook,crdt,yjs,collaboration,realtime
  */
 
-import { useEffect, useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import {
   useCRDTCollabStore,
   type CollabConnectionType,
-  type CollabUser,
   type CollabDocument,
+  type CollabUser,
 } from '../store/crdt-collab-store'
 
 /**
@@ -71,6 +71,14 @@ export interface UseCRDTCollabReturn {
   disconnect: () => Promise<void>
   /** 获取文档状态 */
   getDocumentStatus: (docId: string) => { synced: boolean; error?: string }
+  /** 错误信息 */
+  error: string | undefined
+  /** 文档列表 */
+  documents: CollabDocument[]
+  /** 连接 */
+  connect: (type: CollabConnectionType) => Promise<void>
+  /** 更新用户名 */
+  updateUserName: (name: string) => void
 }
 
 /**
@@ -228,6 +236,18 @@ export function useCRDTCollab(
     }
   }, [defaultConnectionType, connectionType, setConnectionType])
 
+  const error = useCRDTCollabStore((state) => state.error)
+  const documentsMap = useCRDTCollabStore((state) => state.documents)
+  const documents = useMemo(() => Array.from(documentsMap.values()), [documentsMap])
+
+  const connect = useCallback(async (type: CollabConnectionType) => {
+    await setConnectionType(type)
+  }, [setConnectionType])
+
+  const updateUserName = useCallback((name: string) => {
+    useCRDTCollabStore.getState().setUserInfo(name)
+  }, [])
+
   return {
     connectionType,
     connected,
@@ -248,6 +268,10 @@ export function useCRDTCollab(
     setConnectionType,
     disconnect,
     getDocumentStatus,
+    error,
+    documents,
+    connect,
+    updateUserName,
   }
 }
 

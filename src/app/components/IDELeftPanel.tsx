@@ -12,18 +12,30 @@
  * 对齐 Guidelines: P1-left-panel — FileExplorer / TaskManager / AIAssistant / GlobalSearch / QuickAccess / GitIntegration
  */
 
-import { useState, useMemo } from "react";
 import {
-  FolderOpen, MessageSquare, ListTodo, Search, Clock, GitBranch,
-  Star, Trash2, Check, X, Plus, Brain, Loader2,
-  AlertCircle, AlertTriangle, FileText, ArrowUpDown,
+  AlertCircle, AlertTriangle,
+  ArrowUpDown,
+  Brain,
+  Check,
+  Clock,
+  FileText,
+  FolderOpen,
+  GitBranch,
+  ListTodo,
+  Loader2,
+  MessageSquare,
+  Plus,
+  Search,
+  Star, Trash2,
+  X,
 } from "lucide-react";
-import { CyberTooltip } from "./CyberTooltip";
+import { useMemo, useState } from "react";
 import { useI18n } from "../i18n/context";
-import { useThemeStore } from "../store/theme-store";
-import { useTaskStore, type TaskStatus, type TaskPriority, type TaskInference } from "../store/task-store";
 import { useFileStore, type RecentFile } from "../store/file-store";
 import { useModelStore } from "../store/model-store";
+import { useTaskStore, type TaskInference, type TaskPriority, type TaskStatus } from "../store/task-store";
+import { useThemeStore } from "../store/theme-store";
+import { CyberTooltip } from "./CyberTooltip";
 
 // ===== Sub-Panel Types =====
 export type LeftPanelTab =
@@ -35,12 +47,12 @@ export type LeftPanelTab =
   | "git-integration";
 
 const TAB_CONFIG: { id: LeftPanelTab; icon: React.ElementType; labelKey: string }[] = [
-  { id: "file-explorer",   icon: FolderOpen,     labelKey: "fileExplorer" },
-  { id: "ai-assistant",    icon: MessageSquare,   labelKey: "aiAssistant" },
-  { id: "task-manager",    icon: ListTodo,        labelKey: "taskManager" },
-  { id: "global-search",   icon: Search,          labelKey: "globalSearch" },
-  { id: "quick-access",    icon: Clock,           labelKey: "quickAccess" },
-  { id: "git-integration", icon: GitBranch,       labelKey: "gitIntegration" },
+  { id: "file-explorer", icon: FolderOpen, labelKey: "fileExplorer" },
+  { id: "ai-assistant", icon: MessageSquare, labelKey: "aiAssistant" },
+  { id: "task-manager", icon: ListTodo, labelKey: "taskManager" },
+  { id: "global-search", icon: Search, labelKey: "globalSearch" },
+  { id: "quick-access", icon: Clock, labelKey: "quickAccess" },
+  { id: "git-integration", icon: GitBranch, labelKey: "gitIntegration" },
 ];
 
 // ===== Props =====
@@ -345,18 +357,9 @@ function TaskManagerMiniPanel() {
               >
                 {inf.task.title}
               </span>
-              {/* Subtask count */}
-              {inf.task.subtasks.length > 0 && (
-                <span style={{ fontFamily: tk.fontMono, fontSize: "7px", color: tk.foregroundMuted }}>
-                  {inf.task.subtasks.filter((s) => s.isCompleted).length}/{inf.task.subtasks.length}
-                </span>
-              )}
-              {/* AI inferred badge */}
-              {inf.task.source === "ai-inferred" && (
-                <span style={{ fontFamily: tk.fontMono, fontSize: "6px", color: tk.primary, background: tk.primaryGlow, padding: "0 3px", borderRadius: 2 }}>
-                  AI
-                </span>
-              )}
+              <span style={{ fontFamily: tk.fontMono, fontSize: "6px", color: tk.primary, background: tk.primaryGlow, padding: "0 3px", borderRadius: 2 }}>
+                AI
+              </span>
             </div>
           ))}
         </div>
@@ -525,7 +528,7 @@ function QuickAccessMiniPanel() {
               <div key={i} className="flex items-center gap-1.5 py-1 hover:bg-white/5 cursor-pointer rounded px-1 transition-all">
                 <FileText size={8} color={tk.primaryDim} />
                 <div className="flex-1 min-w-0">
-                  <p className="truncate" style={{ fontFamily: tk.fontMono, fontSize: "8px", color: tk.foreground }}>{f.filename || f.name || f}</p>
+                  <p className="truncate" style={{ fontFamily: tk.fontMono, fontSize: "8px", color: tk.foreground }}>{f.filename}</p>
                   {f.lastAccessed && (
                     <p style={{ fontFamily: tk.fontMono, fontSize: "6px", color: tk.foregroundMuted }}>
                       {new Date(f.lastAccessed).toLocaleDateString()}

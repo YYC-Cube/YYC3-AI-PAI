@@ -14,7 +14,7 @@
 import { useState, useCallback, useRef, useEffect, useMemo } from 'react'
 import {
   X, Play, Download, Copy, Check, RefreshCw, FileCode,
-  _Layers, _ChevronDown, _ChevronRight, _Eye, Code2, _Zap,
+  Layers, ChevronDown, ChevronRight, Eye, Code2, Zap,
 } from 'lucide-react'
 import { useI18n } from '../i18n/context'
 import { CyberTooltip } from './CyberTooltip'
@@ -391,7 +391,7 @@ interface CodeGenPanelProps {
   onCodeGenerated?: (files: GeneratedFile[]) => void
 }
 
-export function CodeGenPanel({ _visible, onClose, designJson, onCodeGenerated }: CodeGenPanelProps) {
+export function CodeGenPanel({ visible, onClose, designJson, onCodeGenerated }: CodeGenPanelProps) {
   const { locale } = useI18n()
   const isZh = locale === 'zh'
   const { tokens: tk, isCyberpunk } = useThemeStore()

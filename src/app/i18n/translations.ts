@@ -954,6 +954,13 @@ export const translations = {
     offline: { zh: "离线缓存", en: "OFFLINE" },
   },
 
+  // ===== Diagnostics Panel =====
+  diagnostics: {
+    title: { zh: "代码诊断", en: "DIAGNOSTICS" },
+    allClear: { zh: "所有问题已清除", en: "All Clear" },
+    allClearDesc: { zh: "没有检测到代码问题", en: "No code issues detected" },
+  },
+
   // ===== Live Preview =====
   livePreview: {
     title: { zh: "实时预览", en: "LIVE PREVIEW" },

@@ -12,7 +12,7 @@
 import { useState, useMemo } from 'react'
 import {
   X, Settings, Globe, Palette, Keyboard, Info,
-  Monitor, Check, Code2, _Eye,
+  Monitor, Check, Code2, Eye,
   Sparkles, RotateCcw, Download,
   LayoutGrid,
   User, Bot, Plug, Cpu, BookOpen, MessageSquare, Shield,
@@ -337,7 +337,7 @@ export function SettingsPanel({ visible, onClose }: SettingsPanelProps) {
 
             {/* === Extracted sub-tabs === */}
             {tab === 'shortcuts' && <ShortcutsTab tk={tk} isCyberpunk={isCyberpunk} shortcuts={shortcuts} setShortcut={setShortcut} />}
-            {tab === 'layouts' && <LayoutsTab tk={tk} isCyberpunk={isCyberpunk} />}
+            {tab === 'layouts' && <LayoutsTab tk={tk} />}
             {tab === 'account' && <AccountTab tk={tk} isCyberpunk={isCyberpunk} />}
             {tab === 'agents' && <AgentsTab tk={tk} isCyberpunk={isCyberpunk} />}
             {tab === 'mcp' && <MCPTab tk={tk} isCyberpunk={isCyberpunk} />}

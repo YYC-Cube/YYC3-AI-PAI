@@ -15,7 +15,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import {
   Brain, Cpu, Database, Globe, Shield, Activity, Terminal,
   Settings, Zap, Radio, Wifi, Eye, ChevronRight, Send,
-  BarChart3, Lock, Server, Layers, _Code, MessageSquare, ArrowUpRight, Bot,
+  BarChart3, Lock, Server, Layers, Code, MessageSquare, ArrowUpRight, Bot,
   AppWindow, Code2, Bell, Command, Search
 } from "lucide-react";
 import { GlitchText } from "./GlitchText";

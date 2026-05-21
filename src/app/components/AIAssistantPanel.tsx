@@ -76,7 +76,7 @@ export function AIAssistantPanel({ visible, onClose }: AIAssistantPanelProps) {
     unloadAllModels,
     setActiveModel,
     infer,
-    _clearTasks,
+    clearTasks,
     clearCache,
     getCacheStats,
   } = useWebGPUInference({
@@ -86,6 +86,12 @@ export function AIAssistantPanel({ visible, onClose }: AIAssistantPanelProps) {
   // 状态
   const [activeTab, setActiveTab] = useState<'models' | 'infer' | 'stats' | 'cache'>('models')
   const [testInput, setTestInput] = useState('function helloWorld() {\n  return ')
+
+  const formatSize = (bytes: number) => {
+    if (bytes < 1024) return `${bytes}B`
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)}KB`
+    return `${(bytes / (1024 * 1024)).toFixed(1)}MB`
+  }
 
   // 按类型分组模型 - 必须在条件返回之前调用
   const modelsByType = useMemo(() => {

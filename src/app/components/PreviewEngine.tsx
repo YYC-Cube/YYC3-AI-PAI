@@ -238,7 +238,7 @@ interface PreviewEngineProps {
 }
 
 export const PreviewEngine = memo(function PreviewEngine({
-  files, version, onDoubleClickRestore, _isFullscreen,
+  files, version, onDoubleClickRestore, isFullscreen,
 }: PreviewEngineProps) {
   const { locale } = useI18n()
   const isZh = locale === 'zh'

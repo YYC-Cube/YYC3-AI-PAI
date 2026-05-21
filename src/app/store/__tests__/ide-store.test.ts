@@ -344,7 +344,7 @@ describe('Persistence', () => {
 
   it('persisted data should contain _layoutVersion', () => {
     ideStore.openTab('test.ts')
-    const lastCall = localStorageMock.setItem.mock.calls.at(-1)
+    const lastCall = localStorageMock.setItem.mock.calls[localStorageMock.setItem.mock.calls.length - 1]
     expect(lastCall).toBeDefined()
     const data = JSON.parse(lastCall![1])
     expect(data._layoutVersion).toBe(2)

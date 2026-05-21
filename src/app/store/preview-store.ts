@@ -11,7 +11,7 @@
  * @tags preview,state-management,core
  */
 
-import { useSyncExternalStore } from 'react'
+import { useSyncExternalStore } from 'react';
 
 // ===== Types =====
 
@@ -27,7 +27,7 @@ export interface DevicePreset {
   icon: 'monitor' | 'tablet' | 'smartphone'
 }
 
-/** Preview _history snapshot */
+/** Preview history snapshot */
 export interface PreviewSnapshot {
   id: string
   code: string
@@ -39,12 +39,12 @@ export interface PreviewSnapshot {
 /** Console log entry */
 export interface ConsoleEntry {
   id: string
-  type: 'log' | 'warn' | '_error' | 'info'
+  type: 'log' | 'warn' | 'error' | 'info'
   message: string
   timestamp: number
 }
 
-/** Preview _error */
+/** Preview error */
 export interface PreviewError {
   message: string
   line?: number
@@ -94,14 +94,14 @@ interface PreviewState {
   consoleVisible: boolean
   /** Console entries */
   consoleEntries: ConsoleEntry[]
-  /** Preview _history snapshots */
-  _history: PreviewSnapshot[]
-  /** Current _history index (-1 = latest) */
+  /** Preview history snapshots */
+  history: PreviewSnapshot[]
+  /** Current history index (-1 = latest) */
   historyIndex: number
-  /** Max _history entries */
+  /** Max history entries */
   maxHistory: number
-  /** Current preview _error */
-  _error: PreviewError | null
+  /** Current preview error */
+  error: PreviewError | null
   /** Whether preview is currently updating */
   isUpdating: boolean
   /** Last update timestamp */

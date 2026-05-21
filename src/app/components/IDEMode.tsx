@@ -402,7 +402,7 @@ export function IDEMode({ onSwitchMode, onOpenSettings, onOpenNotifications, onO
         </div>
 
         {/* ========== STATUS BAR ========== */}
-        <IDEStatusBar selectedFile={selectedFile} viewMode={viewMode} fullscreenPreview={fullscreenPreview} lastAutoSave={lastAutoSave}
+        <IDEStatusBar selectedFile={selectedFile ?? ''} viewMode={viewMode} fullscreenPreview={fullscreenPreview} lastAutoSave={lastAutoSave}
           onApplyPreset={(presetId) => {
             ideStore.applyPreset(presetId);
             const preset = LAYOUT_PRESETS.find(p => p.id === presetId);

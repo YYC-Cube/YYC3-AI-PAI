@@ -154,7 +154,7 @@ describe('useWebGPUInference Hook', () => {
     it('should filter models by type', () => {
       const { result } = renderHook(() => useWebGPUInference({ autoInitialize: false }))
 
-      const textModels = result.current.modelsByType('code-completion')
+      const textModels = result.current.modelsByType('code')
       expect(Array.isArray(textModels)).toBe(true)
     })
 

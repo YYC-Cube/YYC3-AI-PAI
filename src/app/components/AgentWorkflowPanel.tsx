@@ -12,9 +12,9 @@ import React, { useState, useMemo } from 'react';
 import {
   Brain,
   Play,
-  _Square,
+  Square,
   RefreshCw,
-  _Plus,
+  Plus,
   Trash2,
   Settings,
   Activity,
@@ -426,7 +426,7 @@ export const AgentWorkflowPanel: React.FC = () => {
   const {
     // Agent状态
     agents,
-    _activeAgent,
+    activeAgent,
     activeAgentId,
 
     // 任务状态
@@ -446,7 +446,7 @@ export const AgentWorkflowPanel: React.FC = () => {
 
     // 日志操作
     clearLogs,
-    _getFilteredLogs,
+    getFilteredLogs,
 
     // 统计信息
     getAgentStats

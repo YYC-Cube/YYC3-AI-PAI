@@ -8,8 +8,8 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import {
   User, AlertTriangle, RotateCcw, Check, Edit3,
-  _ChevronDown, FolderOpen, Save, RefreshCw, Cloud,
-  Trash2, Download, Link2, GitMerge, _LayoutGrid,
+  ChevronDown, FolderOpen, Save, RefreshCw, Cloud,
+  Trash2, Download, Link2, GitMerge, LayoutGrid,
 } from 'lucide-react'
 import { useI18n } from '../../i18n/context'
 import { useSettingsStore, settingsActions } from '../../store/settings-store'
@@ -172,7 +172,7 @@ export function ShortcutsTab({ tk, isCyberpunk, shortcuts, setShortcut }: Settin
 }
 
 // ===== Account Tab =====
-export function AccountTab({ tk, _isCyberpunk }: SettingsTabProps) {
+export function AccountTab({ tk, isCyberpunk }: SettingsTabProps) {
   const { t } = useI18n()
   const settings = useSettingsStore()
   const profile = settings.userProfile

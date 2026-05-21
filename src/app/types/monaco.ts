@@ -29,6 +29,14 @@ export namespace MonacoEditor {
     dispose(): void
     getDomNode(): HTMLElement | null
     getEditorType(): string
+    updateOptions(opts: Record<string, unknown>): void
+    executeEdits(source: string, edits: IIdentifiedSingleEditOperation[]): boolean
+  }
+
+  export interface IIdentifiedSingleEditOperation {
+    range: IRange
+    text: string | null
+    forceMoveMarkers?: boolean
   }
 
   export interface ITextModel {
@@ -40,6 +48,7 @@ export namespace MonacoEditor {
     getOffsetAt(position: IPosition): number
     getPositionAt(offset: number): Position
     getFullModelRange(): Range
+    getValueInRange(range: IRange): string
     onDidChangeContent(listener: (e: IModelContentChangedEvent) => void): IDisposable
     dispose(): void
   }
@@ -84,6 +93,7 @@ export namespace MonacoEditor {
     selectionStartColumn: number
     positionLineNumber: number
     positionColumn: number
+    isEmpty(): boolean
   }
 
   export interface Position {
@@ -247,7 +257,15 @@ export interface MonacoCancellationToken {
 
 export type MonacoEditorInstance = MonacoEditor.IStandaloneCodeEditor
 
-export type MonacoNamespace = Record<string, unknown>
+export interface MonacoNamespace {
+  Range: new (startLine: number, startCol: number, endLine: number, endCol: number) => MonacoEditor.Range
+  editor: {
+    defineTheme(name: string, theme: Record<string, unknown>): void
+    setTheme(name: string): void
+    [key: string]: unknown
+  }
+  [key: string]: unknown
+}
 
 export interface MonacoDecoration {
   range: MonacoEditor.IRange

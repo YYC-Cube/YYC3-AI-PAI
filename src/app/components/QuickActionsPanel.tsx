@@ -20,7 +20,7 @@ import {
   ArrowRightLeft, ListCollapse, Maximize2, SpellCheck, TestTube2,
 } from 'lucide-react'
 import { useI18n } from '../i18n/context'
-import { useThemeStore } from '../store/theme-store'
+import { useThemeStore, type ThemeTokens } from '../store/theme-store'
 import { useModelStore } from '../store/model-store'
 import {
   useQuickActionsStore,
@@ -397,7 +397,7 @@ export function QuickActionsPanel({
 }
 
 // ===== Clipboard History Sub-Panel =====
-function ClipboardHistoryPanel({ tk }: { tk: Record<string, string> }) {
+function ClipboardHistoryPanel({ tk }: { tk: ThemeTokens }) {
   const { t } = useI18n()
   const qaState = useQuickActionsStore()
   const history = qaState.clipboardHistory

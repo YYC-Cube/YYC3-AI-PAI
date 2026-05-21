@@ -11,8 +11,9 @@
  * @tags component,monaco,ai,completion,webgpu
  */
 
-import { useEffect, useRef, useCallback, useState } from 'react'
-import type * as Monaco from 'monaco-_editor'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+// @ts-expect-error monaco-editor types loaded at runtime via @monaco-editor/loader
+import * as Monaco from 'monaco-editor'
 import { useWebGPUInference } from '../hooks/useWebGPUInference'
 
 /**

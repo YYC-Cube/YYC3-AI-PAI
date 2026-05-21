@@ -13,7 +13,7 @@
 
 import { useCallback, useEffect, useRef } from 'react'
 import {
-  X, ChevronRight, ChevronLeft, Sparkles, _FolderOpen,
+  X, ChevronRight, ChevronLeft, Sparkles, FolderOpen,
   Check, Loader2, FileCode, Layers, Rocket,
 } from 'lucide-react'
 import { useI18n } from '../i18n/context'
@@ -330,7 +330,7 @@ export function ProjectCreateModal() {
                 const tpl = store.getSelectedTemplate()
                 if (!tpl) return null
 
-                const renderFilePreview = (nodes: typeof tpl.defaultFiles, depth: number): JSX.Element[] => {
+                const renderFilePreview = (nodes: typeof tpl.defaultFiles, depth: number): React.JSX.Element[] => {
                   return nodes.map((node) => (
                     <div key={node.name}>
                       <div style={{ paddingLeft: depth * 14, fontFamily: tk.fontMono, fontSize: '10px', color: node.type === 'folder' ? tk.primary : tk.foregroundMuted, lineHeight: '20px' }}>

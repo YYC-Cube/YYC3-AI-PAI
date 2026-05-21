@@ -11,24 +11,19 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import {
+  initializeDefaultAgents,
   useAgentStore,
   type Agent,
-  type _AgentSkill,
-  type AgentStatus,
-  type ComplexTask,
-  type SubTask,
-  type ExecutionPlan,
-  type CollaborationResult,
   type AgentLog,
-  type MCPTool,
-  type UserPreferences,
+  type AgentStatus,
+  type CollaborationResult,
+  type ComplexTask,
+  type ExecutionPlan,
   type Experience,
+  type MCPTool,
   type SkillResult,
-  initializeDefaultAgents,
-  _createPlannerAgent,
-  _createCoderAgent,
-  _createReviewerAgent,
-  _createTesterAgent
+  type SubTask,
+  type UserPreferences
 } from '../store/agent-store';
 
 // ============================================================================

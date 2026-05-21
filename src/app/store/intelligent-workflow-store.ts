@@ -281,6 +281,8 @@ interface IntelligentWorkflowStoreActions {
   cancelWorkflow: (workflowId: string) => void
   /** 重试失败节点 */
   retryNode: (workflowId: string, nodeId: string) => Promise<void>
+  /** 添加执行事件 */
+  addExecutionEvent: (event: Partial<WorkflowExecutionEvent> & { type: WorkflowExecutionEvent['type']; workflowId: string }) => void
 
   // ===== AI智能功能 =====
   /** 自然语言转换为工作流 */
@@ -586,8 +588,10 @@ export const useIntelligentWorkflowStore = create<IntelligentWorkflowStoreState 
         // 如果转换成功，创建工作流
         if (result.success && result.workflow) {
           const workflow = get().createWorkflow({
-            ...result.workflow,
+            name: result.workflow.name || 'Untitled',
+            description: result.workflow.description || '',
             nodes: new Map(),
+            startNodeId: '',
             executionMode: result.workflow.executionMode || 'sequential',
           })
           result.workflow.id = workflow.id
@@ -819,7 +823,8 @@ export const useIntelligentWorkflowStore = create<IntelligentWorkflowStoreState 
         state.executionEvents.push({
           ...event,
           id: `event-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        })
+          timestamp: event.timestamp ?? Date.now(),
+        } as WorkflowExecutionEvent)
       })
     },
   }))

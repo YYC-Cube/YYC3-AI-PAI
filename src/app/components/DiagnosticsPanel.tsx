@@ -15,7 +15,7 @@ import { useState, useMemo } from 'react'
 import {
   X, AlertTriangle, AlertCircle, Info, CheckCircle,
   Zap, Shield, Bug, Lightbulb, Wrench,
-  ChevronRight, _FileText, RefreshCw, _Filter,
+  ChevronRight, FileText, RefreshCw, Filter,
 } from 'lucide-react'
 import { useI18n } from '../i18n/context'
 import { useThemeStore, Z_INDEX, BLUR } from '../store/theme-store'
@@ -105,7 +105,7 @@ const MOCK_DIAGNOSTICS: Diagnostic[] = [
 
 const SEVERITY_ORDER: Record<DiagSeverity, number> = { error: 0, warning: 1, info: 2, hint: 3 }
 
-export function DiagnosticsPanel({ visible, onClose, _currentFile, onApplyFix }: DiagnosticsPanelProps) {
+export function DiagnosticsPanel({ visible, onClose, currentFile, onApplyFix }: DiagnosticsPanelProps) {
   const { t, locale } = useI18n()
   const { tokens: tk, isCyberpunk } = useThemeStore()
   const isZh = locale === 'zh'

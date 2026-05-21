@@ -13,8 +13,8 @@
 
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import {
-  Search, File, _X, CornerDownLeft, FolderOpen,
-  _FileText, _Hash, ArrowRight,
+  Search, File, X, CornerDownLeft, FolderOpen,
+  FileText, Hash, ArrowRight,
 } from 'lucide-react'
 import { useI18n } from '../i18n/context'
 import { useThemeStore, Z_INDEX, BLUR } from '../store/theme-store'
@@ -180,7 +180,7 @@ export function GlobalSearch({ visible, onClose, fileContentMap, onSelectFile, o
       }
     }
     window.addEventListener('keydown', handler)
-  if (!visible) return null
+  if (!visible) return undefined
 
     return () => window.removeEventListener('keydown', handler)
   }, [visible, totalCount, results, selectedIndex, onClose, handleSelect])

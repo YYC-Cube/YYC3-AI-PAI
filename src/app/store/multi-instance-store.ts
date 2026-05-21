@@ -265,7 +265,7 @@ export const multiInstanceActions = {
       resources: [...state.resources, { instanceId: id, memoryMB: 80, cpuPercent: 1, tabCount: 0, sessionCount: 0 }],
     }
 
-    activityBus.emit({ type: 'system', message: `New ${windowType} instance created`, timestamp: Date.now() })
+    activityBus.push('system', `New ${windowType} instance created`, "系统")
     emit()
     return instance
   },
@@ -288,7 +288,7 @@ export const multiInstanceActions = {
       resources: state.resources.filter(r => r.instanceId !== instanceId),
     }
 
-    activityBus.emit({ type: 'system', message: `Instance ${inst.title} closed`, timestamp: Date.now() })
+    activityBus.push('system', `Instance ${inst.title} closed`, "系统")
     emit()
   },
 
@@ -350,7 +350,7 @@ export const multiInstanceActions = {
 
     pushIPC('workspace-created', ws)
     state = { ...state, workspaces: [...state.workspaces, ws] }
-    activityBus.emit({ type: 'system', message: `Workspace "${name}" created`, timestamp: Date.now() })
+    activityBus.push('system', `Workspace "${name}" created`, "系统")
     emit()
     return ws
   },
@@ -451,7 +451,7 @@ export const multiInstanceActions = {
       }
     }
 
-    activityBus.emit({ type: 'system', message: `Session "${name}" (${type}) created`, timestamp: Date.now() })
+    activityBus.push('system', `Session "${name}" (${type}) created`, "系统")
     emit()
     return session
   },

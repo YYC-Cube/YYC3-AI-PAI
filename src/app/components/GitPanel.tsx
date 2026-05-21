@@ -13,10 +13,10 @@
 
 import { useState, useMemo } from 'react'
 import {
-  X, GitBranch, GitCommit, _GitMerge, _GitPullRequest,
+  X, GitBranch, GitCommit, GitMerge, GitPullRequest,
   Plus, Minus, Check, RefreshCw, Upload, Download,
-  ChevronDown, _ChevronRight, _FileText, FilePlus, FileMinus,
-  Edit3, _Eye, RotateCcw, Copy,
+  ChevronDown, ChevronRight, FileText, FilePlus, FileMinus,
+  Edit3, Eye, RotateCcw, Copy,
 } from 'lucide-react'
 import { useI18n } from '../i18n/context'
 import { useThemeStore, Z_INDEX, BLUR } from '../store/theme-store'

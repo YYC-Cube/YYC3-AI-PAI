@@ -29,7 +29,7 @@ interface IDEStatusBarProps {
   selectedFile: string;
   viewMode: "edit" | "preview";
   fullscreenPreview: boolean;
-  lastAutoSave: string;
+  lastAutoSave: string | null;
   onApplyPreset: (presetId: string) => void;
 }
 

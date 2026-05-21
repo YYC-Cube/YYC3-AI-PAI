@@ -6,6 +6,15 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      deploy_environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
 
 permissions:
   contents: read
@@ -16,48 +25,68 @@ concurrency:
   group: pages
   cancel-in-progress: false
 
+env:
+  NODE_VERSION: '20'
+  PNPM_VERSION: '9'
+
 jobs:
+  # ===== 代码质量检查 =====
   lint:
-    name: Lint
+    name: 🔍 Code Quality Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: ${{ env.PNPM_VERSION }}
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
 
       - run: pnpm lint
 
+      - name: Check for console.logs
+        run: |
+          if grep -r "console\." src/ --exclude-dir=__tests__ --exclude-dir=tests; then
+            echo "❌ Found console statements in production code"
+            exit 1
+          fi
+
+  # ===== 测试 =====
   test:
-    name: Test
+    name: 🧪 Run Tests
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
 
       - uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: ${{ env.PNPM_VERSION }}
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
 
       - run: pnpm test
 
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 7
+
+  # ===== 构建和优化 =====
   build:
-    name: Build
+    name: 🏗️ Build Application
     needs: [lint]
     runs-on: ubuntu-latest
     steps:
@@ -65,24 +94,173 @@ jobs:
 
       - uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: ${{ env.PNPM_VERSION }}
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
 
       - run: pnpm build
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
+      - name: Optimize build artifacts
+        run: |
+          echo "📦 Build size analysis:"
+          du -sh dist/
+          find dist -type f -name "*.js" -exec sh -c 'echo "$(stat -f%z "$1") bytes: $1"' _ {} \; | sort -n | tail -10
 
-  deploy:
-    name: Deploy to Pages
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: dist/
+          retention-days: 7
+
+  # ===== 部署到 ai-pai.yyc3.top =====
+  deploy-production:
+    name: 🚀 Deploy to ai-pai.yyc3.top
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: [build, test]
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://ai-pai.yyc3.top
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: dist/
+
+      # ===== SSH部署到服务器 =====
+      - name: 📡 Deploy to Server via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.PRODUCTION_HOST }}
+          username: ${{ secrets.PRODUCTION_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          port: ${{ secrets.PRODUCTION_PORT || 22 }}
+          script_stop: true
+          script: |
+            set -e
+
+            echo "🎯 Starting deployment to ai-pai.yyc3.top"
+
+            # 配置路径
+            DEPLOY_PATH="/var/www/ai-pai.yyc3.top"
+            BACKUP_PATH="/var/backups/ai-pai.yyc3.top"
+            TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+
+            # 创建备份
+            echo "📦 Creating backup..."
+            mkdir -p "$BACKUP_PATH"
+            if [ -d "$DEPLOY_PATH" ]; then
+              tar -czf "$BACKUP_PATH/backup_$TIMESTAMP.tar.gz" -C "$DEPLOY_PATH" .
+              echo "✅ Backup created: $BACKUP_PATH/backup_$TIMESTAMP.tar.gz"
+            fi
+
+            # 创建部署目录（如果不存在）
+            mkdir -p "$DEPLOY_PATH"
+
+            # 清理旧文件（保留重要配置）
+            echo "🧹 Cleaning old files..."
+            cd "$DEPLOY_PATH"
+            find . -type f ! -name '.htaccess' ! -name 'robots.txt' -delete
+            find . -type d -empty -delete
+
+            # 等待文件传输完成
+            echo "⏳ Waiting for file transfer..."
+            sleep 5
+
+            # 设置权限
+            echo "🔐 Setting permissions..."
+            find "$DEPLOY_PATH" -type d -exec chmod 755 {} \;
+            find "$DEPLOY_PATH" -type f -exec chmod 644 {} \;
+
+            # 健康检查
+            echo "🏥 Performing health check..."
+            sleep 10
+
+            # 清理旧备份（保留最近5个）
+            echo "🧹 Cleaning old backups..."
+            cd "$BACKUP_PATH"
+            ls -t backup_*.tar.gz | tail -n +6 | xargs -r rm
+
+            echo "✅ Deployment completed successfully!"
+            echo "🌐 URL: https://ai-pai.yyc3.top"
+            echo "⏰ Time: $(date)"
+            echo "📦 Backup: $BACKUP_PATH/backup_$TIMESTAMP.tar.gz"
+
+      - name: 📤 Upload files via SCP
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.PRODUCTION_HOST }}
+          username: ${{ secrets.PRODUCTION_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          port: ${{ secrets.PRODUCTION_PORT || 22 }}
+          source: "dist/*"
+          target: "/var/www/ai-pai.yyc3.top/"
+          strip_components: 1
+
+      # ===== 部署后验证 =====
+      - name: 🏥 Health Check
+        run: |
+          echo "🏥 Performing health checks..."
+          sleep 15
+
+          # 检查主站点
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://ai-pai.yyc3.top || echo "000")
+          echo "HTTP Status: $HTTP_STATUS"
+
+          if [ "$HTTP_STATUS" = "200" ]; then
+            echo "✅ Main site is accessible"
+          else
+            echo "❌ Health check failed!"
+            exit 1
+          fi
+
+          # 检查关键资源
+          curl -s -I https://ai-pai.yyc3.top | grep -E "HTTP|Server|Content-Type"
+
+      # ===== 部署结果通知 =====
+      - name: 📧 Deployment Success Notification
+        if: success()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: |
+            ✅ *部署成功*
+            📦 项目: YYC³ AI-PAI
+            🌐 域名: https://ai-pai.yyc3.top
+            👤 提交: ${{ github.sha }}
+            👤 作者: ${{ github.actor }}
+            📝 信息: ${{ github.event.head_commit.message }}
+            ⏰ 时间: ${{ github.event.head_commit.timestamp }}
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+
+      - name: 📧 Deployment Failure Notification
+        if: failure()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: |
+            ❌ *部署失败*
+            📦 项目: YYC³ AI-PAI
+            👤 提交: ${{ github.sha }}
+            👤 作者: ${{ github.actor }}
+            📝 信息: ${{ github.event.head_commit.message }}
+            🔗 链接: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+
+  # ===== GitHub Pages 部署（备用） =====
+  deploy-github-pages:
+    name: 📄 Deploy to GitHub Pages
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     needs: build
     runs-on: ubuntu-latest
@@ -90,6 +268,64 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: dist/
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  # ===== 部署监控 =====
+  deployment-monitor:
+    name: 📊 Deployment Monitoring
+    needs: [deploy-production]
+    if: always() && github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Monitor deployment status
+        run: |
+          echo "📊 Monitoring deployment to ai-pai.yyc3.top"
+          echo "========================================="
+          echo "Deployment ID: ${{ github.run_id }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "Author: ${{ github.actor }}"
+          echo "Time: $(date)"
+          echo "========================================="
+
+          # 持续监控（5分钟）
+          for i in {1..10}; do
+            echo "🏥 Health check $i/10..."
+            HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://ai-pai.yyc3.top || echo "000")
+            RESPONSE_TIME=$(curl -s -o /dev/null -w "%{time_total}" https://ai-pai.yyc3.top || echo "0")
+
+            echo "Status: $HTTP_STATUS | Response: ${RESPONSE_TIME}s"
+
+            if [ "$HTTP_STATUS" = "200" ] && [ $(echo "$RESPONSE_TIME < 2.0" | bc) -eq 1 ]; then
+              echo "✅ Deployment is healthy!"
+              exit 0
+            fi
+
+            sleep 30
+          done
+
+          echo "⚠️ Deployment monitoring completed with warnings"
+          exit 0
+
+  # ===== 性能监控 =====
+  performance-check:
+    name: ⚡ Performance Check
+    needs: [deploy-production]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v18
+        with:
+          urls: |
+            https://ai-pai.yyc3.top
+          budgetPath: ./lighthouse-budget.json
+          uploadArtifacts: true
+          temporaryPublicStorage: true

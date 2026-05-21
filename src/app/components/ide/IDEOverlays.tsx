@@ -75,7 +75,7 @@ export function IDEOverlays(props: IDEOverlaysProps) {
       </Suspense>
       <Suspense fallback={null}>
         <CodeGenPanel visible={panels.codeGen} onClose={() => hide("codeGen")}
-          designJson={props.activeDesignJson} onCodeGenerated={props.onCodeGenerated} />
+          designJson={props.activeDesignJson as any} onCodeGenerated={props.onCodeGenerated} />
       </Suspense>
       <Suspense fallback={null}>
         <CollabPanel visible={panels.collabPanel} onClose={() => hide("collabPanel")} />

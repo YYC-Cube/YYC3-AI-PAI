@@ -11,7 +11,7 @@
  * @tags api,types,typescript,network
  */
 
-import type { _AppError } from './errors'
+import type { AppError } from './errors'
 
 /**
  * @description HTTP方法

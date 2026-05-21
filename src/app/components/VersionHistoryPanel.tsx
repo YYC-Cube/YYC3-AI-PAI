@@ -13,8 +13,8 @@
 
 import { useState, useMemo, useCallback } from 'react'
 import {
-  X, History, RotateCcw, Trash2, _Clock, _FileText,
-  ChevronDown, _ChevronRight, FileDiff, Save, Tag,
+  X, History, RotateCcw, Trash2, Clock, FileText,
+  ChevronDown, ChevronRight, FileDiff, Save, Tag,
 } from 'lucide-react'
 import { useThemeStore, Z_INDEX, BLUR } from '../store/theme-store'
 import { useI18n } from '../i18n/context'
@@ -82,7 +82,7 @@ export function VersionHistoryPanel({ currentContent = '', onRollback }: Version
         zIndex: Z_INDEX.modal,
         background: tk.panelBg,
         borderLeft: `1px solid ${tk.cardBorder}`,
-        backdropFilter: BLUR.heavy,
+        backdropFilter: BLUR.lg,
         boxShadow: tk.shadowHover,
       }}
     >

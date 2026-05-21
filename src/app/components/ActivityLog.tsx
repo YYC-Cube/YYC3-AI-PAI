@@ -74,7 +74,7 @@ function toLocalDatetimeString(ts: number): string {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
 }
 
-export function ActivityLog({ _visible, onClose }: ActivityLogProps) {
+export function ActivityLog({ visible, onClose }: ActivityLogProps) {
   const { t, locale } = useI18n()
   const { tokens: tk, isCyberpunk } = useThemeStore()
   const isZh = locale === 'zh'
@@ -237,11 +237,12 @@ export function ActivityLog({ _visible, onClose }: ActivityLogProps) {
         }
         // Validate entries have required fields
         const valid = parsed.filter(
-          (entry: Record<string, unknown>): entry is ActivityEntry =>
-            typeof entry.id === 'string' &&
-            typeof entry.category === 'string' &&
-            typeof entry.message === 'string' &&
-            typeof entry.timestamp === 'number'
+          (entry: unknown): entry is ActivityEntry =>
+            typeof entry === 'object' && entry !== null &&
+            typeof (entry as Record<string, unknown>).id === 'string' &&
+            typeof (entry as Record<string, unknown>).category === 'string' &&
+            typeof (entry as Record<string, unknown>).message === 'string' &&
+            typeof (entry as Record<string, unknown>).timestamp === 'number'
         ) as ActivityEntry[]
         if (valid.length === 0) {
           flashStatus(t('activity', 'importFail'))

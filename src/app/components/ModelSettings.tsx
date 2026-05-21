@@ -854,7 +854,7 @@ type TabKey = "providers" | "ollama" | "mcp" | "diagnostics" | "performance" | "
 export function ModelSettings() {
   const { t: rawT } = useI18n();
   const t = rawT as (ns: string, key: string) => string;
-  const { modelSettingsOpen, modelSettingsInitialTab, closeModelSettings, aiModels, addAIModel, _removeAIModel, updateAIModel, activateAIModel, activeModelId, getActiveModel, sendToActiveModel } = useModelStore();
+  const { modelSettingsOpen, modelSettingsInitialTab, closeModelSettings, aiModels, addAIModel, removeAIModel, updateAIModel, activateAIModel, activeModelId, getActiveModel, sendToActiveModel } = useModelStore();
   const { tokens, isCyberpunk, themeId, setTheme, autoDetect, setAutoDetect } = useThemeStore();
   const [activeTab, setActiveTab] = useState<TabKey>("providers");
 

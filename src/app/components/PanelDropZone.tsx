@@ -126,11 +126,11 @@ export function PanelDropZone({ slot, children }: PanelDropZoneProps) {
       }}
       transition={{ type: "spring", stiffness: 400, damping: 30 }}
       draggable
-      onDragStart={handleDragStart}
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
-      onDragEnd={handleDragEnd}
+      onDragStart={handleDragStart as any}
+      onDragOver={handleDragOver as any}
+      onDragLeave={handleDragLeave as any}
+      onDrop={handleDrop as any}
+      onDragEnd={handleDragEnd as any}
       onContextMenu={handleContextMenu}
     >
       {/* Drag handle grip */}

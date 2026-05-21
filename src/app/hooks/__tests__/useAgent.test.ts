@@ -5,17 +5,17 @@
  * 目标：85%+覆盖率
  */
 
-import { renderHook, act, waitFor } from '@testing-library/react';
-import { describe, it, expect} from 'vitest';
+import { act, renderHook, waitFor } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
 import {
-  useAgent,
+  calculateAgentLoad,
   createTaskDescription,
   formatAgentStatus,
   formatExecutionTime,
-  calculateAgentLoad,
-  getAgentStatusColor,
   getAgentIcon,
-  getSkillName
+  getAgentStatusColor,
+  getSkillName,
+  useAgent
 } from '../useAgent';
 
 // ============================================================================
@@ -44,10 +44,13 @@ const createMockTool = (id: string) => ({
   id,
   name: `Tool ${id}`,
   description: 'Mock tool description',
-  version: '1.0.0',
-  parameters: {},
+  schema: {
+    type: 'object' as const,
+    properties: {},
+    required: [],
+  },
   isAvailable: () => true,
-  execute: async (input: unknown) => ({ success: true, data: input, error: null })
+  execute: async (input: unknown) => ({ success: true, data: input })
 });
 
 // ============================================================================
@@ -211,7 +214,6 @@ describe('useAgent Hook - 日志操作', () => {
       result.current.addLog({
         agentId: 'agent-1',
         level: 'info',
-        category: 'test',
         message: 'Test log message'
       });
     });
@@ -226,13 +228,11 @@ describe('useAgent Hook - 日志操作', () => {
       result.current.addLog({
         agentId: 'agent-1',
         level: 'info',
-        category: 'test',
         message: 'Log 1'
       });
       result.current.addLog({
         agentId: 'agent-2',
         level: 'warn',
-        category: 'test',
         message: 'Log 2'
       });
     });
@@ -313,8 +313,8 @@ describe('useAgent Hook - 记忆操作', () => {
 
     act(() => {
       result.current.updatePreferences('agent-planner', {
-        language: 'typescript',
-        theme: 'dark'
+        languagePreference: 'typescript',
+        codingStyle: 'functional'
       });
     });
 

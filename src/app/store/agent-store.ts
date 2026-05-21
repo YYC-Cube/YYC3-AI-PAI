@@ -244,7 +244,7 @@ export interface AgentState {
   registerAgent: (agent: Omit<Agent, 'stats'>) => void;
   unregisterAgent: (agentId: string) => void;
 
-  startTask: (task: ComplexTask) => Promise<void>;
+  startTask: (task: ComplexTask) => Promise<CollaborationResult>;
   executeTask: (agentId: string, task: SubTask) => Promise<SubTaskResult>;
   completeTask: (taskId: string, result: unknown) => void;
   cancelTask: (taskId: string) => void;

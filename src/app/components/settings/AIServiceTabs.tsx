@@ -5,22 +5,34 @@
  * @version v4.8.2
  */
 
-import { useState } from 'react'
 import {
-  Bot, Plug, Cpu, BookOpen, Shield, Zap,
-  ChevronDown, Plus, Trash2, X, RefreshCw,
-  ExternalLink, Play, Pause, Terminal, Volume2,
+  BookOpen,
+  Bot,
+  ChevronDown,
+  Cpu,
+  ExternalLink,
+  Pause,
+  Play,
+  Plug,
+  Plus,
+  RefreshCw,
+  Shield,
+  Terminal,
+  Trash2,
+  Volume2,
+  X,
+  Zap,
 } from 'lucide-react'
+import { useState } from 'react'
 import { useI18n } from '../../i18n/context'
-import { useSettingsStore, settingsActions, type AgentConfig } from '../../store/settings-store'
-import { useMCPStore, mcpStoreActions } from '../../store/mcp-store'
+import { mcpStoreActions, useMCPStore } from '../../store/mcp-store'
+import { settingsActions, useSettingsStore, type AgentConfig } from '../../store/settings-store'
 import type { SettingsTabProps } from './SettingsShared'
 import { ToggleRow } from './SettingsShared'
-import type { _ThemeTokens } from '../../store/theme-store'
 
 // ===== Agents Tab =====
-export function AgentsTab({ tk, _isCyberpunk }: SettingsTabProps) {
-  const { t, _locale } = useI18n()
+export function AgentsTab({ tk, isCyberpunk }: SettingsTabProps) {
+  const { t, locale } = useI18n()
   const settings = useSettingsStore()
   const [addMode, setAddMode] = useState(false)
   const [newName, setNewName] = useState('')
@@ -172,7 +184,7 @@ export function AgentsTab({ tk, _isCyberpunk }: SettingsTabProps) {
 }
 
 // ===== MCP Tab =====
-export function MCPTab({ tk, _isCyberpunk }: SettingsTabProps) {
+export function MCPTab({ tk, isCyberpunk }: SettingsTabProps) {
   const { t, locale } = useI18n()
   const isZh = locale === 'zh'
   const mcpState = useMCPStore()
@@ -278,7 +290,7 @@ export function ModelsTab({ tk, isCyberpunk, openModelSettings, aiModels }: Sett
           <p style={{ fontFamily: tk.fontMono, fontSize: '10px', color: tk.foregroundMuted, marginTop: 8 }}>{t('settings', 'modelsEmpty')}</p>
         ) : (
           <div className="mt-2 rounded-lg overflow-hidden" style={{ border: `1px solid ${tk.borderDim}` }}>
-            {aiModels.map((model: AIModel, i: number) => (
+            {aiModels.map((model, i) => (
               <div key={model.id} className="flex items-center justify-between px-4 py-2.5" style={{ borderBottom: i < aiModels.length - 1 ? `1px solid ${tk.borderDim}` : 'none', background: i % 2 === 0 ? 'transparent' : tk.primaryGlow }}>
                 <div className="flex items-center gap-2">
                   <Cpu size={12} color={model.isActive ? tk.primary : tk.foregroundMuted} />
@@ -301,7 +313,7 @@ export function ModelsTab({ tk, isCyberpunk, openModelSettings, aiModels }: Sett
 }
 
 // ===== Context Tab =====
-export function ContextTab({ tk, _isCyberpunk }: SettingsTabProps) {
+export function ContextTab({ tk, isCyberpunk }: SettingsTabProps) {
   const { t } = useI18n()
   const settings = useSettingsStore()
   const ctx = settings.context
@@ -382,7 +394,7 @@ export function ContextTab({ tk, _isCyberpunk }: SettingsTabProps) {
 }
 
 // ===== Conversation Tab =====
-export function ConversationTab({ tk, _isCyberpunk }: SettingsTabProps) {
+export function ConversationTab({ tk, isCyberpunk }: SettingsTabProps) {
   const { t } = useI18n()
   const settings = useSettingsStore()
   const conv = settings.conversation
@@ -458,7 +470,7 @@ export function ConversationTab({ tk, _isCyberpunk }: SettingsTabProps) {
 }
 
 // ===== Rules & Skills Tab =====
-export function RulesSkillsTab({ tk, _isCyberpunk }: SettingsTabProps) {
+export function RulesSkillsTab({ tk, isCyberpunk }: SettingsTabProps) {
   const { t } = useI18n()
   const settings = useSettingsStore()
   const [activeSection, setActiveSection] = useState<'rules' | 'skills'>('rules')

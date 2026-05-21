@@ -17,6 +17,7 @@ import { activityBus } from './activity-store'
 export type ThemeId = 'cyberpunk' | 'clean'
 
 export interface ThemeTokens {
+  [key: string]: string | { zh: string; en: string } | boolean | undefined
   id: ThemeId
   name: { zh: string; en: string }
   // Core colors

@@ -12,7 +12,7 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import { useIntelligentWorkflowStore } from '../intelligent-workflow-store'
 import { enableMapSet } from 'immer'
 import type {
-  _Workflow,
+  Workflow,
   WorkflowNode,
   WorkflowNodeType,
 } from '../intelligent-workflow-store'

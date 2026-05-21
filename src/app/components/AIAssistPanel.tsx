@@ -254,7 +254,7 @@ Provide 3-5 actionable suggestions for this code.${context.selectedText ? ' Focu
         setSuggestions(mockSugs)
         cyberToast(isZh ? 'AI 未返回有效建议，使用默认建议' : 'No valid AI suggestions, using defaults')
       }
-    } catch (err: Error | AIError | unknown) {
+    } catch (err: Error | unknown) {
       // API 调用失败，fallback 到 mock
       const mockSugs = generateMockSuggestions(context)
       setSuggestions(mockSugs)

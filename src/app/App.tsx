@@ -11,21 +11,21 @@
  * @tags app,root,react
  */
 
-import { useState, useMemo, useCallback, lazy, Suspense, useEffect, useRef } from "react";
+import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "../styles/cyberpunk.css";
-import { I18nProvider, useI18n } from "./i18n/context";
-import { ModelStoreProvider, useModelStore } from "./store/model-store";
-import { useThemeStore } from "./store/theme-store";
-import { useShortcutStore } from "./store/shortcut-store";
-import { CyberpunkBackground } from "./components/CyberpunkBackground";
 import { CyberToaster } from "./components/CyberToast";
+import { CyberpunkBackground } from "./components/CyberpunkBackground";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { PanelSkeleton } from "./components/LoadingSkeleton";
-import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
-import { panelDnDActions } from "./store/panel-dnd-store";
-import { usePerformanceMonitor } from "./hooks/usePerformanceMonitor";
-import { useAutoMonacoPreload, PRELOAD_STRATEGIES } from "./services/monaco-preloader";
 import { MonacoPerformanceMonitor } from "./components/performance";
+import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
+import { usePerformanceMonitor } from "./hooks/usePerformanceMonitor";
+import { I18nProvider, useI18n } from "./i18n/context";
+import { PRELOAD_STRATEGIES, useAutoMonacoPreload } from "./services/monaco-preloader";
+import { ModelStoreProvider, useModelStore } from "./store/model-store";
+import { panelDnDActions } from "./store/panel-dnd-store";
+import { useShortcutStore } from "./store/shortcut-store";
+import { useThemeStore } from "./store/theme-store";
 
 // ===== Eager imports — main views (critical rendering path) =====
 import { FullscreenMode } from "./components/FullscreenMode";
@@ -38,7 +38,7 @@ const CommandPalette = lazy(() => import("./components/CommandPalette").then(m =
 const SettingsPanel = lazy(() => import("./components/SettingsPanel").then(m => ({ default: m.SettingsPanel })));
 const NotificationCenter = lazy(() => import("./components/NotificationCenter").then(m => ({ default: m.NotificationCenter })));
 const GlobalSearch = lazy(() => import("./components/GlobalSearch").then(m => ({ default: m.GlobalSearch })));
-const _ShortcutCheatSheet = lazy(() => import("./components/ShortcutCheatSheet").then(m => ({ default: m.ShortcutCheatSheet })));
+const ShortcutCheatSheet = lazy(() => import("./components/ShortcutCheatSheet").then(m => ({ default: m.ShortcutCheatSheet })));
 const PerformanceDashboard = lazy(() => import("./components/PerformanceDashboard").then(m => ({ default: m.PerformanceDashboard })));
 const AIAssistantPanel = lazy(() => import("./components/AIAssistantPanel").then(m => ({ default: m.AIAssistantPanel })));
 const CRDTCollabPanel = lazy(() => import("./components/CRDTCollabPanel").then(m => ({ default: m.CRDTCollabPanel })));
@@ -49,11 +49,31 @@ const AgentWorkflowPanel = lazy(() => import("./components/AgentWorkflowPanel").
 import type { PaletteCommand } from "./components/CommandPalette";
 
 import {
-  Monitor, Sun, Moon, Globe, Settings, Bot,
-  Sparkles, Code2, Terminal, FolderPlus,
-  Keyboard, Bell, Eye, Search, Users,
-  GitBranch, Activity, AlertTriangle, LayoutGrid, Scissors, Clock, Database,
-  Puzzle, Shield, Wifi, Zap, Brain,
+  Activity, AlertTriangle,
+  Bell,
+  Bot,
+  Brain,
+  Clock,
+  Code2,
+  Database,
+  Eye,
+  FolderPlus,
+  GitBranch,
+  Globe,
+  Keyboard,
+  LayoutGrid,
+  Monitor,
+  Moon,
+  Puzzle,
+  Scissors,
+  Search,
+  Settings,
+  Shield,
+  Sparkles,
+  Sun,
+  Terminal,
+  Users,
+  Wifi, Zap,
 } from "lucide-react";
 
 type AppMode = "fullscreen" | "widget" | "ide";
@@ -342,14 +362,16 @@ function AppContent() {
     { keys: shortcuts.agentWorkflow?.internal ?? 'mod+shift+a', action: () => setAgentWorkflowVisible(v => !v) },
     // Shortcut cheat sheet
     { keys: shortcuts.shortcutCheatSheet?.internal ?? 'mod+/', action: () => setCheatSheetVisible(v => !v) },
-    { keys: 'escape', action: () => {
-      if (globalSearchVisible) setGlobalSearchVisible(false)
-      else if (commandPaletteVisible) setCommandPaletteVisible(false)
-      else if (settingsVisible) setSettingsVisible(false)
-      else if (notificationsVisible) setNotificationsVisible(false)
-      else if (cheatSheetVisible) setCheatSheetVisible(false)
-      else if (agentWorkflowVisible) setAgentWorkflowVisible(false)
-    }, preventDefault: false },
+    {
+      keys: 'escape', action: () => {
+        if (globalSearchVisible) setGlobalSearchVisible(false)
+        else if (commandPaletteVisible) setCommandPaletteVisible(false)
+        else if (settingsVisible) setSettingsVisible(false)
+        else if (notificationsVisible) setNotificationsVisible(false)
+        else if (cheatSheetVisible) setCheatSheetVisible(false)
+        else if (agentWorkflowVisible) setAgentWorkflowVisible(false)
+      }, preventDefault: false
+    },
   ]);
 
   return (
@@ -421,7 +443,7 @@ function AppContent() {
       {/* Global overlays — eagerly imported */}
       <ModelSettings />
       <CyberToaster />
-      
+
       {/* Monaco Performance Monitor (Q2-01 - P1级功能) */}
       <MonacoPerformanceMonitor editorRef={monacoEditorRef} />
 
@@ -458,7 +480,7 @@ function AppContent() {
               if (stored) {
                 const map = JSON.parse(stored) as Record<string, string>;
                 if (map[fileName]) {
-                  map[fileName] = map[fileName].replaceAll(oldText, newText);
+                  map[fileName] = map[fileName].split(oldText).join(newText);
                   localStorage.setItem("yyc3_file_content_map", JSON.stringify(map));
                   setSearchFileMap({ ...map });
                 }
@@ -490,7 +512,7 @@ function AppContent() {
 
       {/* AI Agent Workflow Panel (P2级功能) */}
       <Suspense fallback={<PanelSkeleton />}>
-        <AgentWorkflowPanel visible={agentWorkflowVisible} onClose={() => setAgentWorkflowVisible(false)} />
+        <AgentWorkflowPanel />
       </Suspense>
     </div>
   );

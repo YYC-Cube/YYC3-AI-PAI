@@ -240,7 +240,7 @@ export function DetachedWindowComponent({ window: win, renderContent }: Detached
           <div
             draggable
             className="cursor-grab active:cursor-grabbing p-0.5 rounded hover:bg-white/10 transition-all"
-            style={{ color: isCrossDragging ? tokens.primary : tokens.foregroundMuted }}
+            style={{ color: panelDnD.isCrossDragging ? tokens.primary : tokens.foregroundMuted }}
             onDragStart={(e) => { e.stopPropagation(); e.dataTransfer.effectAllowed = "move"; e.dataTransfer.setData("text/plain", `window:${win.id}`); panelDnD.startCrossDragFromWindow(win.id); }}
             onDragEnd={() => { panelDnD.cancelCrossDrag(); }}
           >

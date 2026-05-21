@@ -11,23 +11,45 @@
  * @tags panel,system,ui,component
  */
 
-import { useState, useEffect, useCallback } from 'react'
 import {
-  X, Puzzle, Shield, Wifi, WifiOff, Lock, Unlock,
-  HardDrive, Database, Cloud, Trash2, RefreshCw,
-  CheckCircle, XCircle, AlertTriangle, Loader2,
-  Settings, Eye, EyeOff, Upload,
-  ToggleLeft, ToggleRight, Clock, Zap, FileBox,
-  Bot, Github, Paintbrush, Keyboard,
-  ShieldCheck, Activity, Server,
+  Activity,
+  AlertTriangle,
+  Bot,
+  CheckCircle,
+  Clock,
+  Cloud,
+  Database,
+  Eye, EyeOff,
+  FileBox,
+  Github,
+  HardDrive,
+  Keyboard,
+  Loader2,
+  Lock,
+  Paintbrush,
+  Puzzle,
+  RefreshCw,
+  Server,
+  Settings,
+  Shield,
+  ShieldCheck,
+  ToggleLeft, ToggleRight,
+  Trash2,
+  Unlock,
+  Upload,
+  Wifi, WifiOff,
+  X,
+  XCircle,
+  Zap,
 } from 'lucide-react'
-import { useThemeStore, Z_INDEX, BLUR } from '../store/theme-store'
+import { useCallback, useEffect, useState } from 'react'
 import { useI18n } from '../i18n/context'
-import { CyberTooltip } from './CyberTooltip'
+import { cryptoStoreActions, useCryptoStore } from '../store/crypto-store'
+import { offlineStoreActions, useOfflineStore, type CacheEntry } from '../store/offline-store'
+import { MARKETPLACE_PLUGINS, pluginStoreActions, usePluginStore, type PluginMeta, type RegisteredPlugin } from '../store/plugin-store'
+import { BLUR, Z_INDEX, useThemeStore, type ThemeTokens } from '../store/theme-store'
 import { cyberToast } from './CyberToast'
-import { usePluginStore, pluginStoreActions, MARKETPLACE_PLUGINS, type PluginMeta, type RegisteredPlugin } from '../store/plugin-store'
-import { useCryptoStore, cryptoStoreActions, type _SecurityAuditEntry } from '../store/crypto-store'
-import { useOfflineStore, offlineStoreActions, type CacheEntry, type _SyncQueueItem } from '../store/offline-store'
+import { CyberTooltip } from './CyberTooltip'
 
 // ===== Icon Map for Plugin Icons =====
 const ICON_MAP: Record<string, typeof Puzzle> = {
@@ -39,7 +61,7 @@ function getPluginIcon(name: string) { return ICON_MAP[name] ?? Puzzle }
 type SystemTab = 'plugins' | 'security' | 'offline'
 
 // ===== Plugin Tab =====
-function PluginTab({ tk, isZh, _isCyberpunk }: { tk: Record<string, string>; isZh: boolean; _isCyberpunk: boolean }) {
+function PluginTab({ tk, isZh, _isCyberpunk }: { tk: ThemeTokens; isZh: boolean; _isCyberpunk: boolean }) {
   const { plugins } = usePluginStore()
   const [subTab, setSubTab] = useState<'installed' | 'marketplace'>('installed')
 
@@ -169,7 +191,7 @@ function PluginTab({ tk, isZh, _isCyberpunk }: { tk: Record<string, string>; isZ
 }
 
 // ===== Security Tab =====
-function SecurityTab({ tk, isZh, _isCyberpunk }: { tk: Record<string, string>; isZh: boolean; _isCyberpunk: boolean }) {
+function SecurityTab({ tk, isZh, _isCyberpunk }: { tk: ThemeTokens; isZh: boolean; _isCyberpunk: boolean }) {
   const { passphraseSet, vaultUnlocked, encryptedItemCount, auditLog, autoLockTimeout, encryptionStrength } = useCryptoStore()
   const [passphrase, setPassphrase] = useState('')
   const [showPassphrase, setShowPassphrase] = useState(false)
@@ -350,7 +372,7 @@ function SecurityTab({ tk, isZh, _isCyberpunk }: { tk: Record<string, string>; i
 }
 
 // ===== Offline Tab =====
-function OfflineTab({ tk, isZh, _isCyberpunk }: { tk: Record<string, string>; isZh: boolean; _isCyberpunk: boolean }) {
+function OfflineTab({ tk, isZh, _isCyberpunk }: { tk: ThemeTokens; isZh: boolean; _isCyberpunk: boolean }) {
   const { networkStatus, isOffline, cacheEntries, totalCacheSize, maxCacheSize, syncQueue, lastSyncTime, isSyncing, swStatus, networkLatency } = useOfflineStore()
 
   const pendingCount = syncQueue.filter(q => q.status === 'pending').length
@@ -478,8 +500,8 @@ function OfflineTab({ tk, isZh, _isCyberpunk }: { tk: Record<string, string>; is
           <div key={item.id} className="flex items-center gap-2 px-3 py-1.5 border-b transition-colors hover:bg-white/2" style={{ borderColor: `${tk.borderDim}08` }}>
             {item.status === 'completed' ? <CheckCircle size={8} color={tk.success} /> :
               item.status === 'failed' ? <XCircle size={8} color={tk.error} /> :
-              item.status === 'syncing' ? <Loader2 size={8} color={tk.primary} className="animate-spin" /> :
-              <Clock size={8} color={tk.warning} />}
+                item.status === 'syncing' ? <Loader2 size={8} color={tk.primary} className="animate-spin" /> :
+                  <Clock size={8} color={tk.warning} />}
             <span className="px-1 py-0.5 rounded" style={{ fontFamily: tk.fontMono, fontSize: '7px', color: tk.primaryDim, background: `${tk.primaryDim}12` }}>{item.action}</span>
             <span className="truncate" style={{ fontFamily: tk.fontMono, fontSize: '8px', color: tk.foreground }}>{item.resource}</span>
             {item.status === 'failed' && (
@@ -576,9 +598,9 @@ export function SystemPanel() {
 
       {/* Content */}
       <div className="flex-1 overflow-hidden">
-        {activeTab === 'plugins' && <PluginTab tk={tk} isZh={isZh} isCyberpunk={isCyberpunk} />}
-        {activeTab === 'security' && <SecurityTab tk={tk} isZh={isZh} isCyberpunk={isCyberpunk} />}
-        {activeTab === 'offline' && <OfflineTab tk={tk} isZh={isZh} isCyberpunk={isCyberpunk} />}
+        {activeTab === 'plugins' && <PluginTab tk={tk} isZh={isZh} _isCyberpunk={isCyberpunk} />}
+        {activeTab === 'security' && <SecurityTab tk={tk} isZh={isZh} _isCyberpunk={isCyberpunk} />}
+        {activeTab === 'offline' && <OfflineTab tk={tk} isZh={isZh} _isCyberpunk={isCyberpunk} />}
       </div>
     </div>
   )

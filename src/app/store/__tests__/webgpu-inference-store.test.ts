@@ -13,7 +13,7 @@ import { enableMapSet } from 'immer'
 import {
   useWebGPUInferenceStore,
   type AIModel,
-  type _InferenceTask,
+  type InferenceTask,
   type AIModelType,
   type InferenceTaskStatus,
 } from '../webgpu-inference-store'

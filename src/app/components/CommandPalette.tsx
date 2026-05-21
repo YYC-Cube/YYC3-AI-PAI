@@ -13,10 +13,10 @@
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import {
-  Search, _Monitor, _Sun, _Moon, _Globe, _Settings, _Bot,
-  _Terminal, _FolderPlus, _Sparkles, Code2, _Eye, _FileSearch,
-  _Keyboard, _Bell, _Users, Command, CornerDownLeft,
-  _ChevronRight, _Zap,
+  Search, Monitor, Sun, Moon, Globe, Settings, Bot,
+  Terminal, FolderPlus, Sparkles, Code2, Eye, FileSearch,
+  Keyboard, Bell, Users, Command, CornerDownLeft,
+  ChevronRight, Zap,
 } from 'lucide-react'
 import { useI18n } from '../i18n/context'
 import { useThemeStore, Z_INDEX, BLUR } from '../store/theme-store'
@@ -38,7 +38,7 @@ interface CommandPaletteProps {
 }
 
 export function CommandPalette({ visible, onClose, commands }: CommandPaletteProps) {
-  const { t, _locale } = useI18n()
+  const { t, locale } = useI18n()
   const { tokens: tk, isCyberpunk } = useThemeStore()
   const [query, setQuery] = useState('')
   const [selectedIndex, setSelectedIndex] = useState(0)

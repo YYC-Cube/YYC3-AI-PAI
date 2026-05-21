@@ -20,14 +20,14 @@ import {
   CheckCircle, XCircle,
   Loader2, Key, FolderDown, RotateCcw,
 } from 'lucide-react'
-import { useThemeStore, Z_INDEX, BLUR } from '../store/theme-store'
+import { useThemeStore, Z_INDEX, BLUR, type ThemeTokens } from '../store/theme-store'
 import { useI18n } from '../i18n/context'
 import { CyberTooltip } from './CyberTooltip'
 import { cyberToast } from './CyberToast'
 import {
   useDBStore, dbStoreActions,
   type DBConnectionProfile, type DetectedEngine, type TableInfo, type ColumnInfo,
-  type _QueryResult, type QueryHistoryItem, type _BackupRecord,
+  type QueryResult, type QueryHistoryItem, type BackupRecord,
 } from '../store/db-store'
 
 // ===== Connection Form =====
@@ -41,7 +41,7 @@ const TYPE_LABELS: Record<string, string> = { postgres: 'PostgreSQL', mysql: 'My
 const TYPE_COLORS: Record<string, string> = { postgres: '#336791', mysql: '#00758f', redis: '#dc382d' }
 
 // ===== Engine Status Badge =====
-function EngineBadge({ engine, tk }: { engine: DetectedEngine; tk: Record<string, string> }) {
+function EngineBadge({ engine, tk }: { engine: DetectedEngine; tk: ThemeTokens }) {
   const statusColor = engine.status === 'running' ? tk.success : engine.status === 'stopped' ? tk.error : tk.foregroundMuted
   return (
     <div className="flex items-center gap-2 px-3 py-2 rounded-lg" style={{ background: `${TYPE_COLORS[engine.type]}12`, border: `1px solid ${TYPE_COLORS[engine.type]}33` }}>
@@ -65,7 +65,7 @@ function EngineBadge({ engine, tk }: { engine: DetectedEngine; tk: Record<string
 
 // ===== Connection Card =====
 function ConnectionCard({ profile, isActive, tk, isCyberpunk, isZh, onSelect, onTest, onEdit, onDelete, onDisconnect }: {
-  profile: DBConnectionProfile; isActive: boolean; tk: Record<string, string>; isCyberpunk: boolean; isZh: boolean
+  profile: DBConnectionProfile; isActive: boolean; tk: ThemeTokens; isCyberpunk: boolean; isZh: boolean
   onSelect: () => void; onTest: () => void; onEdit: () => void; onDelete: () => void; onDisconnect: () => void
 }) {
   const statusIcon = profile.status === 'connected' ? <Wifi size={10} color={tk.success} /> :
@@ -135,7 +135,7 @@ function ConnectionCard({ profile, isActive, tk, isCyberpunk, isZh, onSelect, on
 }
 
 // ===== SQL Console Sub-panel =====
-function SqlConsolePanel({ tk, isZh, _isCyberpunk }: { tk: Record<string, string>; isZh: boolean; _isCyberpunk: boolean }) {
+function SqlConsolePanel({ tk, isZh, isCyberpunk }: { tk: ThemeTokens; isZh: boolean; isCyberpunk: boolean }) {
   const { activeConnId, queryResult, queryRunning, queryHistory, profiles } = useDBStore()
   const [sql, setSql] = useState('SELECT * FROM users LIMIT 10;')
   const [showHistory, setShowHistory] = useState(false)
@@ -326,8 +326,8 @@ function SqlConsolePanel({ tk, isZh, _isCyberpunk }: { tk: Record<string, string
 }
 
 // ===== Table Explorer Sub-panel =====
-function TableExplorerPanel({ tk, isZh }: { tk: Record<string, string>; isZh: boolean }) {
-  const { activeConnId, _activeSchema, activeTable, schemas, tables, columns, profiles } = useDBStore()
+function TableExplorerPanel({ tk, isZh }: { tk: ThemeTokens; isZh: boolean }) {
+  const { activeConnId, activeSchema, activeTable, schemas, tables, columns, profiles } = useDBStore()
   const [expandedSchemas, setExpandedSchemas] = useState<Set<string>>(new Set(['public']))
   const [expandedTables, setExpandedTables] = useState<Set<string>>(new Set())
   const [loadingSchema, setLoadingSchema] = useState(false)
@@ -471,7 +471,7 @@ function TableExplorerPanel({ tk, isZh }: { tk: Record<string, string>; isZh: bo
 }
 
 // ===== Backup & Restore Sub-panel =====
-function BackupRestorePanel({ tk, isZh, _isCyberpunk }: { tk: Record<string, string>; isZh: boolean; _isCyberpunk: boolean }) {
+function BackupRestorePanel({ tk, isZh, isCyberpunk }: { tk: ThemeTokens; isZh: boolean; isCyberpunk: boolean }) {
   const { activeConnId, backups, profiles } = useDBStore()
   const [backingUp, setBackingUp] = useState(false)
   const [restoring, setRestoring] = useState<string | null>(null)

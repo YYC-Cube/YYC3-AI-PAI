@@ -11,16 +11,16 @@
  * @tags monaco,performance,monitor,ui,component
  */
 
-import { useState, useCallback } from 'react'
-import { Monitor, RefreshCw, X, Clock } from 'lucide-react'
+import { Clock, Monitor, RefreshCw, X } from 'lucide-react'
+// @ts-expect-error monaco-editor types not installed
 import type * as monaco from 'monaco-editor'
+import { useCallback, useState } from 'react'
+import { useI18n } from '../i18n/context'
 import {
-  MonacoPerformanceBenchmark,
   getMonacoBenchmark,
-  type PerformanceMetrics,
+  type PerformanceMetrics
 } from '../services/monaco-performance-benchmark'
 import { useThemeStore } from '../store/theme-store'
-import { useI18n } from '../i18n/context'
 
 interface MonacoPerformanceMonitorProps {
   editor?: monaco.editor.IStandaloneCodeEditor
@@ -61,7 +61,7 @@ export function MonacoPerformanceMonitor({ editor, monaco, visible, onClose }: M
   }, [editor, monaco, benchmark])
 
   if (!metrics) {
-  if (!visible) return null
+    if (!visible) return null
 
     return (
       <div className="absolute inset-0 flex flex-col" style={{ background: tk.background, zIndex: 9999 }}>
@@ -86,7 +86,7 @@ export function MonacoPerformanceMonitor({ editor, monaco, visible, onClose }: M
               onClick={runBenchmark}
               disabled={isRunning || !editor || !monaco}
               className="mt-4 px-4 py-2 rounded transition-all hover:opacity-80 disabled:opacity-40"
-              style={{ background: tk.primary, color: tk.primaryForeground, fontFamily: tk.fontMono, fontSize: '11px' }}
+              style={{ background: tk.primary, color: tk.foreground, fontFamily: tk.fontMono, fontSize: '11px' }}
             >
               {isRunning ? '运行测试中...' : '运行基准测试'}
             </button>

@@ -554,7 +554,7 @@ export const pluginStoreActions = {
 
 // ===== 全局暴露 registerPlugin (对齐 Guidelines: 第三方直接调用) =====
 if (typeof window !== 'undefined') {
-  (window as Record<string, unknown>)['yyc3RegisterPlugin'] = pluginStoreActions.registerPlugin
+  (window as unknown as Record<string, unknown>)['yyc3RegisterPlugin'] = pluginStoreActions.registerPlugin
 }
 
 // ===== React Hook =====

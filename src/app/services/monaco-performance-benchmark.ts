@@ -11,6 +11,7 @@
  * @tags performance,benchmark,monaco,editor
  */
 
+// @ts-expect-error monaco-editor types not installed
 import type * as monaco from 'monaco-editor'
 
 // ===== 性能指标类型 =====
@@ -116,11 +117,11 @@ export class MonacoPerformanceBenchmark {
   /**
    * 记录指标
    */
-  recordMetric(name: string, value: number) {
+  recordMetric(name: string, ...values: number[]) {
     if (!this.metrics.has(name)) {
       this.metrics.set(name, [])
     }
-    this.metrics.get(name)!.push(value)
+    this.metrics.get(name)!.push(...values)
   }
 
   /**
@@ -558,8 +559,8 @@ export class MonacoPerformanceBenchmark {
         `  const result = {`,
         `    id: ${i},`,
         `    name: 'function${i}',`,
-        `    data: Array.from({ length: 10 }, (_, j) => ({`,
-        `      key: 'item_${i}_${j}',`,
+        `    data: Array.from({ length: 10 }, (_, idx) => ({`,
+        `      key: 'item_${i}_' + idx,`,
         `      value: Math.random() * 100,`,
         `      nested: {`,
         `        level1: {`,
@@ -594,17 +595,17 @@ export function useMonacoBenchmark() {
   const [metrics, setMetrics] = useState<PerformanceMetrics | null>(null)
   const [isRunning, setIsRunning] = useState(false)
 
-  const runBenchmark = useCallback(async (editor: monaco.editor.IStandaloneCodeEditor, monaco: typeof monaco) => {
+  const runBenchmark = useCallback(async (editor: monaco.editor.IStandaloneCodeEditor, monacoNs: typeof monaco) => {
     setIsRunning(true)
-    const benchmark = new MonacoPerformanceBenchmark(editor, monaco)
+    const benchmark = new MonacoPerformanceBenchmark(editor, monacoNs)
     const result = await benchmark.runFullSuite()
     setMetrics(result)
     setIsRunning(false)
     return result
   }, [])
 
-  const runQuickTest = useCallback(async (editor: monaco.editor.IStandaloneCodeEditor, monaco: typeof monaco) => {
-    const benchmark = new MonacoPerformanceBenchmark(editor, monaco)
+  const runQuickTest = useCallback(async (editor: monaco.editor.IStandaloneCodeEditor, monacoNs: typeof monaco) => {
+    const benchmark = new MonacoPerformanceBenchmark(editor, monacoNs)
     const cursorMove = await benchmark.testCursorMovement(50)
     return { cursorMoveAvg: cursorMove.reduce((a, b) => a + b, 0) / cursorMove.length }
   }, [])
@@ -613,4 +614,4 @@ export function useMonacoBenchmark() {
 }
 
 // 导入React hook需要的useState和useCallback
-import { useState, useCallback } from 'react'
+import { useCallback, useState } from 'react'

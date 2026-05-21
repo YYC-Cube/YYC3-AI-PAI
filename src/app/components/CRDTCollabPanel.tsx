@@ -11,13 +11,21 @@
  * @tags component,crdt,yjs,collaboration,ui
  */
 
-import { useState, useMemo } from 'react'
 import {
-  X, Users, Wifi, Radio, CheckCircle2, AlertCircle,
-  Clock, Eye, User, GitBranch, Share2, Settings, RefreshCw,
+  AlertCircle,
+  CheckCircle2,
+  Clock, Eye,
+  GitBranch,
+  Radio,
+  Settings,
+  Share2,
+  User,
+  Users, Wifi,
+  X
 } from 'lucide-react'
+import { useMemo, useState } from 'react'
 import { useCRDTCollab } from '../hooks/useCRDTCollab'
-import { useThemeStore, Z_INDEX, BLUR } from '../store/theme-store'
+import { BLUR, Z_INDEX, useThemeStore } from '../store/theme-store'
 
 /**
  * CRDT协作面板属性
@@ -75,7 +83,7 @@ export function CRDTCollabPanel({ visible, onClose }: CRDTCollabPanelProps) {
     disconnect,
     createDocument,
     updateUserName,
-    _updateCursor,
+    updateCursor,
   } = useCRDTCollab({
     autoInitialize: true,
   })
@@ -323,12 +331,12 @@ export function CRDTCollabPanel({ visible, onClose }: CRDTCollabPanelProps) {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 style={{ fontFamily: tk.fontDisplay, fontSize: '11px', color: tk.primary, letterSpacing: '2px' }}>
-                  SHARED DOCUMENTS ({documents.size})
+                  SHARED DOCUMENTS ({documents.length})
                 </h3>
                 <button
                   onClick={() => {
                     if (newDocName.trim()) {
-                      createDocument(newDocName)
+                      createDocument(newDocName, newDocName)
                       setNewDocName('')
                     }
                   }}
@@ -368,7 +376,7 @@ export function CRDTCollabPanel({ visible, onClose }: CRDTCollabPanelProps) {
 
               {/* Documents list */}
               <div className="space-y-2">
-                {Array.from(documents.values()).map((doc) => (
+                {documents.map((doc) => (
                   <div
                     key={doc.id}
                     className="p-3 rounded-lg flex items-center gap-3"
@@ -392,7 +400,7 @@ export function CRDTCollabPanel({ visible, onClose }: CRDTCollabPanelProps) {
                   </div>
                 ))}
 
-                {documents.size === 0 && (
+                {documents.length === 0 && (
                   <div className="text-center py-8" style={{ color: tk.foregroundMuted }}>
                     <Share2 size={32} className="mx-auto mb-2 opacity-50" />
                     <p style={{ fontFamily: tk.fontMono, fontSize: '10px' }}>
@@ -499,13 +507,13 @@ export function CRDTCollabPanel({ visible, onClose }: CRDTCollabPanelProps) {
                   <div>
                     <span style={{ color: tk.foregroundMuted }}>Documents:</span>
                     <span className="ml-2" style={{ color: tk.primary }}>
-                      {documents.size}
+                      {documents.length}
                     </span>
                   </div>
                   <div>
                     <span style={{ color: tk.foregroundMuted }}>Users:</span>
                     <span className="ml-2" style={{ color: tk.primary }}>
-                      {users.size}
+                      {users.length}
                     </span>
                   </div>
                 </div>

@@ -14,7 +14,11 @@
     "lint": "eslint src/ --max-warnings 0",
     "lint:fix": "eslint src/ --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx,css,json}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,tsx,css,json}\""
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,css,json}\"",
+    "deploy": "bash scripts/deploy.sh",
+    "deploy:monitor": "bash scripts/monitor.sh ai-pai.yyc3.top",
+    "deploy:health": "curl -I https://ai-pai.yyc3.top",
+    "deploy:check": "curl -o /dev/null -s -w \"HTTP: %{http_code}\\nTime: %{time_total}s\\n\" https://ai-pai.yyc3.top"
   },
   "dependencies": {
     "@emotion/react": "11.14.0",
