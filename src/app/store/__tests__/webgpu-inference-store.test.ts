@@ -15,7 +15,7 @@ import {
   type AIModel,
   type _InferenceTask,
   type AIModelType,
-  type _InferenceTaskStatus,
+  type InferenceTaskStatus,
 } from '../webgpu-inference-store'
 
 // 启用 Immer MapSet 插件

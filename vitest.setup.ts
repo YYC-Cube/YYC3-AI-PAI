@@ -1,4 +1,8 @@
-import { vi } from 'vitest'
+import { enableMapSet, enablePatches } from 'immer'
+import { afterEach, vi } from 'vitest'
+
+enableMapSet()
+enablePatches()
 
 const IDBRequestMock = {
   result: null,
@@ -161,3 +165,8 @@ class MockBroadcastChannel {
 }
 
 globalThis.BroadcastChannel = MockBroadcastChannel as unknown as typeof BroadcastChannel
+
+afterEach(() => {
+  localStorage.clear()
+  sessionStorage.clear()
+})

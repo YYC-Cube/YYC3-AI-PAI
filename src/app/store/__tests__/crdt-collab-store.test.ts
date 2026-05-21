@@ -8,16 +8,11 @@
  * @copyright Copyright (c) 2026 YanYuCloudCube Team
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { useCRDTCollabStore } from '../crdt-collab-store'
 import {
   enableMapSet,
 } from 'immer'
-import type {
-  _CollabUser,
-  _CollabDocument,
-  CollabConnectionType,
-} from '../crdt-collab-store'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { useCRDTCollabStore } from '../crdt-collab-store'
 
 // 启用Immer的MapSet支持
 enableMapSet()
@@ -42,7 +37,7 @@ class MockDoc {
     callback()
   }
 
-  destroy() {}
+  destroy() { }
 }
 
 vi.mock('yjs', () => ({
@@ -96,7 +91,6 @@ Object.defineProperty(global, 'localStorage', {
 
 describe('useCRDTCollabStore', () => {
   beforeEach(() => {
-    // 重置store状态
     useCRDTCollabStore.setState({
       connectionType: 'none',
       connected: false,

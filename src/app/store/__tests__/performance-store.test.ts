@@ -15,7 +15,7 @@ import type {
   CoreWebVitals,
   ComponentMetrics,
   OptimizationSuggestion,
-  _APIMetrics,
+  APIMetrics,
   SystemMetrics,
 } from '../performance-store'
 

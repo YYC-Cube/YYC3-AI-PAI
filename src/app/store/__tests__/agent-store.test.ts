@@ -21,7 +21,7 @@ import {
   type ComplexTask,
   type SubTask,
   type ExecutionPlan,
-  type _CollaborationResult,
+  type CollaborationResult,
   type AgentSkill,
   type MCPTool,
   type Experience,
