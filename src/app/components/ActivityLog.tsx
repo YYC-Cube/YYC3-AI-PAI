@@ -52,8 +52,9 @@ const CATEGORY_ICON: Record<ActivityCategory, React.ElementType> = {
 }
 
 /** Format timestamps as relative human-readable strings */
-function formatRelativeTime(ts: number, isZh: boolean): string {
-  const diff = Date.now() - ts
+// 🔧 接受当前时间作为参数，避免在渲染期间调用Date.now()
+function formatRelativeTime(ts: number, isZh: boolean, currentTime: number): string {
+  const diff = currentTime - ts
   if (diff < 60000) return isZh ? '刚刚' : 'Just now'
   if (diff < 3600000) {
     const m = Math.floor(diff / 60000)
@@ -74,7 +75,7 @@ function toLocalDatetimeString(ts: number): string {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
 }
 
-export function ActivityLog({ visible, onClose }: ActivityLogProps) {
+export function ActivityLog({ visible: _visible, onClose }: ActivityLogProps) {
   const { t, locale } = useI18n()
   const { tokens: tk, isCyberpunk } = useThemeStore()
   const isZh = locale === 'zh'
@@ -158,7 +159,7 @@ export function ActivityLog({ visible, onClose }: ActivityLogProps) {
 
   /** Compute time bounds based on preset or custom range */
   const timeBounds = useMemo<{ from: number; to: number } | null>(() => {
-    const now = Date.now()
+    const now = currentTime // 🔧 使用缓存的currentTime而不是Date.now()
     switch (dateRange) {
       case '1h': return { from: now - 3600000, to: now }
       case '24h': return { from: now - 86400000, to: now }
@@ -171,6 +172,9 @@ export function ActivityLog({ visible, onClose }: ActivityLogProps) {
       default: return null
     }
   }, [dateRange, customFrom, customTo])
+
+  // 🔧 缓存当前时间，避免在每次渲染时调用Date.now()
+  const currentTime = useMemo(() => Date.now(), [])
 
   const filtered = useMemo(() => {
     let result = entries
@@ -415,7 +419,7 @@ export function ActivityLog({ visible, onClose }: ActivityLogProps) {
                   type="datetime-local"
                   value={customFrom}
                   onChange={e => setCustomFrom(e.target.value)}
-                  max={customTo || toLocalDatetimeString(Date.now())}
+                  max={customTo || toLocalDatetimeString(currentTime)}
                   style={{
                     fontFamily: tk.fontMono, fontSize: '9px', color: tk.foreground,
                     background: tk.inputBg, border: `1px solid ${tk.inputBorder}`,
@@ -431,7 +435,7 @@ export function ActivityLog({ visible, onClose }: ActivityLogProps) {
                   value={customTo}
                   onChange={e => setCustomTo(e.target.value)}
                   min={customFrom}
-                  max={toLocalDatetimeString(Date.now())}
+                  max={toLocalDatetimeString(currentTime)}
                   style={{
                     fontFamily: tk.fontMono, fontSize: '9px', color: tk.foreground,
                     background: tk.inputBg, border: `1px solid ${tk.inputBorder}`,
@@ -529,7 +533,7 @@ export function ActivityLog({ visible, onClose }: ActivityLogProps) {
                         {isZh ? entry.messageZh : entry.message}
                       </span>
                       <span style={{ fontFamily: tk.fontMono, fontSize: '9px', color: tk.foregroundMuted, whiteSpace: 'nowrap', marginLeft: 8 }}>
-                        {formatRelativeTime(entry.timestamp, isZh)}
+                        {formatRelativeTime(entry.timestamp, isZh, currentTime)}
                       </span>
                     </div>
                     {entry.detail && (

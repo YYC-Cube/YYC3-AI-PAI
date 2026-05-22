@@ -545,7 +545,11 @@ Provide 3-5 actionable suggestions for this code.${context.selectedText ? ' Focu
                           </span>
                           <CyberTooltip label={isZh ? '复制代码' : 'COPY CODE'} position="top">
                             <button
-                              onClick={() => handleCopy(suggestion.codeSnippet!)}
+                              onClick={() => {
+                                if (suggestion.codeSnippet) {
+                                  handleCopy(suggestion.codeSnippet);
+                                }
+                              }}
                               className="p-1 rounded hover:opacity-80 transition-all"
                             >
                               <Copy size={9} color={tk.primary} style={{ opacity: 0.5 }} />

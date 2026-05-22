@@ -94,8 +94,27 @@ export function usePerformanceMonitor(options: UsePerformanceMonitorOptions = {}
   const startMonitoring = usePerformanceStore((state) => state.startMonitoring)
   const stopMonitoring = usePerformanceStore((state) => state.stopMonitoring)
 
+  // 🔧 使用useRef避免依赖变化导致定时器重置，防止内存泄漏
   const systemMonitorTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const metricsLoggedRef = useRef<Set<string>>(new Set())
+
+  // 🔧 稳定的配置引用，避免不必要的effect重新执行
+  const optionsRef = useRef({
+    enableSystemMonitoring,
+    systemMonitoringInterval,
+    onReport,
+    debug,
+  })
+
+  // 更新配置引用但不触发effect重新执行
+  useEffect(() => {
+    optionsRef.current = {
+      enableSystemMonitoring,
+      systemMonitoringInterval,
+      onReport,
+      debug,
+    }
+  })
 
   useEffect(() => {
     if (enableWebVitals) {
@@ -112,7 +131,7 @@ export function usePerformanceMonitor(options: UsePerformanceMonitorOptions = {}
             const logKey = `${name}-${metric.rating}`
             if (!metricsLoggedRef.current.has(logKey)) {
               metricsLoggedRef.current.add(logKey)
-              if (debug) {
+              if (optionsRef.current.debug) {
                 console.warn(`[Web Vital] ${name}:`, {
                   value: metric.value,
                   rating: metric.rating,
@@ -123,8 +142,8 @@ export function usePerformanceMonitor(options: UsePerformanceMonitorOptions = {}
             }
 
             // 自定义报告处理器
-            if (onReport) {
-              onReport(metric)
+            if (optionsRef.current.onReport) {
+              optionsRef.current.onReport(metric)
             }
           }
         })
@@ -137,21 +156,21 @@ export function usePerformanceMonitor(options: UsePerformanceMonitorOptions = {}
       registerVital('FCP', onFCP)
       registerVital('TTFB', onTTFB)
 
-      if (debug) {
+      if (optionsRef.current.debug) {
         console.warn('[Performance Monitor] Web Vitals monitoring started')
       }
     }
 
     return () => {
       stopMonitoring()
-      if (debug) {
+      if (optionsRef.current.debug) {
         console.warn('[Performance Monitor] Web Vitals monitoring stopped')
       }
     }
-  }, [enableWebVitals, onReport, debug, updateWebVital, startMonitoring, stopMonitoring])
+  }, [enableWebVitals, updateWebVital, startMonitoring, stopMonitoring]) // 🔧 移除不稳定的依赖
 
   useEffect(() => {
-    if (!enableSystemMonitoring) return
+    if (!optionsRef.current.enableSystemMonitoring) return
 
     const collectSystemMetrics = async () => {
       try {
@@ -174,7 +193,7 @@ export function usePerformanceMonitor(options: UsePerformanceMonitorOptions = {}
           networkSpeed,
         })
 
-        if (debug) {
+        if (optionsRef.current.debug) {
           console.warn('[Performance Monitor] System metrics:', {
             cpu: cpuUsage.toFixed(1),
             memory: memoryUsage.toFixed(1),
@@ -190,25 +209,29 @@ export function usePerformanceMonitor(options: UsePerformanceMonitorOptions = {}
     // 立即收集一次
     collectSystemMetrics()
 
+    // 🔧 使用稳定的配置引用，避免定时器重新创建
+    const interval = optionsRef.current.systemMonitoringInterval
+
     // 定期收集系统指标
     systemMonitorTimerRef.current = setInterval(
       collectSystemMetrics,
-      systemMonitoringInterval
+      interval
     )
 
-    if (debug) {
+    if (optionsRef.current.debug) {
       console.warn('[Performance Monitor] System monitoring started')
     }
 
     return () => {
       if (systemMonitorTimerRef.current) {
         clearInterval(systemMonitorTimerRef.current)
+        systemMonitorTimerRef.current = null // 🔧 防止双重清理
       }
-      if (debug) {
+      if (optionsRef.current.debug) {
         console.warn('[Performance Monitor] System monitoring stopped')
       }
     }
-  }, [enableSystemMonitoring, systemMonitoringInterval, debug, recordSystemMetrics])
+  }, [recordSystemMetrics]) // 🔧 只依赖recordSystemMetrics，避免不必要的重新执行
 
   return {
     isMonitoring: usePerformanceStore((state) => state.isMonitoring),

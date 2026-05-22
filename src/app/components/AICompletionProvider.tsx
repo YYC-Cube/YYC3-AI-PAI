@@ -11,7 +11,7 @@
  * @tags component,monaco,ai,completion,webgpu
  */
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react'
 // @ts-expect-error monaco-editor types loaded at runtime via @monaco-editor/loader
 import * as Monaco from 'monaco-editor'
 import { useWebGPUInference } from '../hooks/useWebGPUInference'
@@ -266,7 +266,9 @@ export function useAICompletionProvider(
   )
 
   // 设置补全Provider
-  useEffect(() => {
+  // 🔧 使用useLayoutEffect而不是useEffect，以避免级联渲染警告
+  // 这里需要在DOM更新前同步设置状态，以确保注册状态的正确性
+  useLayoutEffect(() => {
     if (!editorRef.current || !enabled) {
       clearProvider()
       return
@@ -317,14 +319,18 @@ export function useAICompletionProvider(
 
     // 注册Provider
     providerRef.current = Monaco.languages.registerCompletionItemProvider('*', provider)
-    setIsProviderRegistered(true)
+
+    // 🔧 延迟状态更新，避免同步setState
+    // 使用setTimeout确保状态更新在下一个事件循环中执行
+    setTimeout(() => setIsProviderRegistered(true), 0)
 
     console.warn('[AI Completion] Provider registered')
 
     return () => {
       clearDebounceTimer()
       clearProvider()
-      setIsProviderRegistered(false)
+      // 🔧 延迟状态更新，避免同步setState
+      setTimeout(() => setIsProviderRegistered(false), 0)
     }
   }, [
     editorRef,

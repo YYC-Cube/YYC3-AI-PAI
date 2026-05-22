@@ -48,6 +48,17 @@ const AgentWorkflowPanel = lazy(() => import("./components/AgentWorkflowPanel").
 // Type-only import (erased at compile time)
 import type { PaletteCommand } from "./components/CommandPalette";
 
+// ===== Monaco Editor Type Definition =====
+interface MonacoEditorRef {
+  getValue?: () => string;
+  setValue?: (value: string) => void;
+  getAction?: (actionId: string) => unknown;
+  executeCommand?: (commandId: string) => unknown;
+  focus?: () => void;
+  onDidChangeModelContent?: (listener: () => void) => void;
+  dispose?: () => void;
+}
+
 import {
   Activity, AlertTriangle,
   Bell,
@@ -98,13 +109,14 @@ function AppContent() {
   const { shortcuts } = useShortcutStore();
 
   // ===== Monaco Editor Ref for Performance Monitoring =====
-  const monacoEditorRef = useRef<any>(null);
+  const monacoEditorRef = useRef<MonacoEditorRef | null>(null);
 
-  // ===== Performance Monitoring (P0级功能) =====
+  // ===== Performance Monitoring (P0级功能) - 🔧 生产环境优化配置 =====
   usePerformanceMonitor({
-    enableWebVitals: true,
-    enableSystemMonitoring: true,
-    debug: false, // 生产环境设为false
+    enableWebVitals: import.meta.env.PROD, // 🔧 只在生产环境启用Web Vitals
+    enableSystemMonitoring: !import.meta.env.PROD, // 🔧 只在开发环境启用系统监控
+    systemMonitoringInterval: import.meta.env.PROD ? 10000 : 2000, // 🔧 生产环境降低监控频率
+    debug: !import.meta.env.PROD, // 🔧 只在开发环境显示调试信息
   });
 
   // ===== Monaco Editor 预加载 (P0优化 - Q2-01) =====
@@ -498,6 +510,14 @@ function AppContent() {
       {/* WebGPU AI Assistant Panel (P0级功能) */}
       <Suspense fallback={<PanelSkeleton />}>
         <AIAssistantPanel visible={aiAssistantVisible} onClose={() => setAIAssistantVisible(false)} />
+      </Suspense>
+
+      {/* Shortcut Cheat Sheet */}
+      <Suspense fallback={<PanelSkeleton />}>
+        <ShortcutCheatSheet
+          visible={cheatSheetVisible}
+          onClose={() => setCheatSheetVisible(false)}
+        />
       </Suspense>
 
       {/* CRDT Collaboration Panel (P0级功能) */}

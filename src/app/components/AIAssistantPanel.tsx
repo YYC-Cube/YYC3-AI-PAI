@@ -76,7 +76,7 @@ export function AIAssistantPanel({ visible, onClose }: AIAssistantPanelProps) {
     unloadAllModels,
     setActiveModel,
     infer,
-    clearTasks,
+    // clearTasks, // 🔧 暂时未使用，保留以备将来使用
     clearCache,
     getCacheStats,
   } = useWebGPUInference({
