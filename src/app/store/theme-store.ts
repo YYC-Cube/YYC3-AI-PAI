@@ -347,9 +347,9 @@ export function useThemeStore() {
   return {
     ...snapshot,
     ...actions,
-    tokens: THEMES[snapshot.themeId],
-    isCyberpunk: snapshot.themeId === 'cyberpunk',
-    isClean: snapshot.themeId === 'clean',
+    tokens: THEMES[snapshot.themeId || 'cyberpunk'], // 添加默认值
+    isCyberpunk: (snapshot.themeId || 'cyberpunk') === 'cyberpunk', // 强制默认值
+    isClean: (snapshot.themeId || 'cyberpunk') === 'clean',
     autoDetect: isAutoDetectEnabled(),
     ...snapshot.effects,
   }
