@@ -19,8 +19,7 @@ import {
   onLCP,
   onTTFB,
 } from 'web-vitals'
-import type { CoreWebVitals } from '../store/performance-store'
-import { usePerformanceStore } from '../store/performance-store'
+import { usePerformanceStore, type CoreWebVitals } from '../store/performance-store'
 
 interface WebVitalMetric {
   name: string

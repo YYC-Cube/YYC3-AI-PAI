@@ -14,9 +14,8 @@
 import { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import {
   Bot, Plus, Image, FolderOpen, Link, Code, Clipboard, ChevronRight,
-  Send, Plug,
+  Send, Plug, Figma,
 } from "lucide-react";
-import { Figma } from "lucide-react";
 import { CyberTooltip } from "../CyberTooltip";
 import { useI18n } from "../../i18n/context";
 import { useModelStore } from "../../store/model-store";

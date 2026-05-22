@@ -51,8 +51,7 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useI18n } from "../i18n/context";
-import type { AggregatedMetrics, CostSummary, ErrorStats } from "../store/ai-metrics-store";
-import { aiMetricsStore, getErrorTypeLabel, useAIMetrics } from "../store/ai-metrics-store";
+import { aiMetricsStore, getErrorTypeLabel, useAIMetrics, type AggregatedMetrics, type CostSummary, type ErrorStats } from "../store/ai-metrics-store";
 import { useModelStore, type AIModel } from "../store/model-store";
 import { BLUR, Z_INDEX, themeStore, useThemeStore, type ThemeTokens } from "../store/theme-store";
 import { ThemePreview } from "./ThemePreview";
@@ -357,7 +356,7 @@ function ProviderCard({ provider, apiKey, customUrl, diags, expanded, activeMode
                       <div style={{ fontFamily: tk.fontMono, fontSize: "9px", color: tk.foregroundMuted }}>{model.description}</div>
                     </div>
                     {model.pricing && <span style={{ fontFamily: tk.fontMono, fontSize: "8px", color: tk.foregroundMuted }}>{model.pricing}</span>}
-                    {diag?.status === "success" && diag.latency != null && <span style={{ fontFamily: tk.fontMono, fontSize: "9px", color: tk.success }}>{diag.latency}ms</span>}
+                    {diag?.status === "success" && diag.latency !== null && <span style={{ fontFamily: tk.fontMono, fontSize: "9px", color: tk.success }}>{diag.latency}ms</span>}
                     <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                       {!isActive && <button onClick={() => onSelectModel(model.id)} className="flex items-center gap-1 px-2 py-1 rounded-lg transition-all hover:opacity-80" style={{ fontFamily: tk.fontMono, fontSize: "9px", color: tk.primary, border: `1px solid ${tk.border}` }}><ArrowRight size={9} />{t("modelSettings", "use")}</button>}
                       <button onClick={() => onTestConnection(model.id)} className="p-1 rounded transition-all hover:opacity-80" style={{ color: tk.foregroundMuted }}>
@@ -402,7 +401,7 @@ function ProviderCard({ provider, apiKey, customUrl, diags, expanded, activeMode
               <div className="flex items-center gap-1.5">
                 <XCircle size={10} color={tk.error} />
                 <span style={{ fontFamily: tk.fontMono, fontSize: "10px", color: tk.error }}>{diag.modelName}</span>
-                {diag.latency != null && <span className="ml-auto" style={{ fontFamily: tk.fontMono, fontSize: "9px", color: tk.foregroundMuted }}>{diag.latency}ms</span>}
+                {diag.latency !== null && <span className="ml-auto" style={{ fontFamily: tk.fontMono, fontSize: "9px", color: tk.foregroundMuted }}>{diag.latency}ms</span>}
               </div>
               <div style={{ fontFamily: tk.fontMono, fontSize: "9px", color: tk.foregroundMuted, paddingLeft: 18 }}>{diag.message}</div>
             </div>
@@ -1035,7 +1034,7 @@ export function ModelSettings() {
   const totalModels = allProviders.reduce((s, p) => s + p.models.length, 0);
   const onlineCount = Object.values(diagnostics).filter(d => d.status === "success").length;
   const testedCount = Object.values(diagnostics).filter(d => d.status === "success" || d.status === "error").length;
-  const avgLat = (() => { const ls = Object.values(diagnostics).filter(d => d.latency != null).map(d => d.latency!); return ls.length ? Math.round(ls.reduce((a, b) => a + b, 0) / ls.length) : 0; })();
+  const avgLat = (() => { const ls = Object.values(diagnostics).filter(d => d.latency !== null).map(d => d.latency!); return ls.length ? Math.round(ls.reduce((a, b) => a + b, 0) / ls.length) : 0; })();
 
   return (
     <div className="fixed inset-0 flex items-center justify-center" style={{ zIndex: Z_INDEX.modal }}>
@@ -1252,7 +1251,7 @@ export function ModelSettings() {
                           {isActive ? <CheckCircle2 size={12} color={tokens.primary} /> : diag.status === "success" ? <CheckCircle2 size={10} color={tokens.success} /> : diag.status === "error" ? <XCircle size={10} color={tokens.error} /> : <Loader2 size={10} color={tokens.primary} className="animate-spin" />}
                           <span className="flex-1" style={{ fontFamily: tokens.fontMono, fontSize: "10px", color: isActive ? tokens.primary : tokens.foreground }}>{model.name}</span>
                           {isActive && <span className="px-1.5 py-0.5 rounded-full" style={{ fontFamily: tokens.fontMono, fontSize: "8px", color: tokens.primary, background: tokens.primaryGlow }}>{t("modelSettings", "currentUse")}</span>}
-                          {diag.latency != null && <span style={{ fontFamily: tokens.fontMono, fontSize: "9px", color: diag.status === "success" ? tokens.success : tokens.foregroundMuted }}>{diag.latency}ms</span>}
+                          {diag.latency !== null && <span style={{ fontFamily: tokens.fontMono, fontSize: "9px", color: diag.status === "success" ? tokens.success : tokens.foregroundMuted }}>{diag.latency}ms</span>}
                           {diag.status === "error" && <span className="max-w-[180px] truncate" style={{ fontFamily: tokens.fontMono, fontSize: "9px", color: tokens.error }}>{diag.message}</span>}
                           {diag.status === "success" && !isActive && (
                             <button onClick={() => handleSelect(provider.id, model.id)} className="flex items-center gap-1 px-2.5 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-all" style={{ fontFamily: tokens.fontMono, fontSize: "9px", color: tokens.primary, border: `1px solid ${tokens.border}` }}>
