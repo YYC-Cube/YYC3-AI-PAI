@@ -15,7 +15,7 @@ import { useThemeStore } from "../store/theme-store";
 
 export function CyberpunkBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { tokens: tk, isCyberpunk } = useThemeStore();
+  const { tokens: tk, isCyberpunk = false } = useThemeStore();
 
   useEffect(() => {
     const canvas = canvasRef.current;

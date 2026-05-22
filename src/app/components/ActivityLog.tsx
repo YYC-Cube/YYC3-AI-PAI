@@ -77,7 +77,7 @@ function toLocalDatetimeString(ts: number): string {
 
 export function ActivityLog({ visible: _visible, onClose }: ActivityLogProps) {
   const { t, locale } = useI18n()
-  const { tokens: tk, isCyberpunk } = useThemeStore()
+  const { tokens: tk, isCyberpunk = false } = useThemeStore()
   const isZh = locale === 'zh'
   const { entries, clearAll, importEntries } = useActivityStore()
 

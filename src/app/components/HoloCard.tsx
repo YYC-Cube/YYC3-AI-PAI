@@ -20,7 +20,7 @@ interface HoloCardProps {
 }
 
 export function HoloCard({ children, className = "" }: HoloCardProps) {
-  const { tokens, isCyberpunk } = useThemeStore();
+  const { tokens, isCyberpunk = false } = useThemeStore();
 
   return (
     <div

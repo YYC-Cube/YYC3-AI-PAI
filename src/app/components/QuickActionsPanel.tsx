@@ -64,7 +64,7 @@ export function QuickActionsPanel({
   showClipboard = false,
 }: QuickActionsPanelProps) {
   const { t, locale } = useI18n()
-  const { tokens: tk, isCyberpunk } = useThemeStore()
+  const { tokens: tk, isCyberpunk = false } = useThemeStore()
   const { sendToActiveModel, getActiveModel } = useModelStore()
   const qaState = useQuickActionsStore()
 

@@ -39,7 +39,7 @@ interface CommandPaletteProps {
 
 export function CommandPalette({ visible, onClose, commands }: CommandPaletteProps) {
   const { t, locale } = useI18n()
-  const { tokens: tk, isCyberpunk } = useThemeStore()
+  const { tokens: tk, isCyberpunk = false } = useThemeStore()
   const [query, setQuery] = useState('')
   const [selectedIndex, setSelectedIndex] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)

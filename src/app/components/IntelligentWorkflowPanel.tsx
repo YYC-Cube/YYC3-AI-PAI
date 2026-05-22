@@ -79,7 +79,7 @@ export interface IntelligentWorkflowPanelProps {
  * ```
  */
 export function IntelligentWorkflowPanel({ visible, onClose }: IntelligentWorkflowPanelProps) {
-  const { tokens: tk, isCyberpunk } = useThemeStore()
+  const { tokens: tk, isCyberpunk = false } = useThemeStore()
 
   // 智能工作流Hook
   const {

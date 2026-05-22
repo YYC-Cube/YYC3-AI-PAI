@@ -65,7 +65,7 @@ export function IDEHeader({
   projectStoreOpenModal, dbStoreOpenPanel, pluginStoreOpenPanel, cryptoStoreOpenPanel,
 }: IDEHeaderProps) {
   const { t } = useI18n();
-  const { tokens, isCyberpunk } = useThemeStore();
+  const { tokens, isCyberpunk = false } = useThemeStore();
   const panelBg = tokens.panelBg;
   const borderColor = tokens.border;
   const { show } = overlayPanels;

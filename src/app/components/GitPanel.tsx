@@ -68,7 +68,7 @@ const MOCK_COMMITS: GitCommitEntry[] = [
 
 export function GitPanel({ visible, onClose }: GitPanelProps) {
   const { t } = useI18n()
-  const { tokens: tk, isCyberpunk } = useThemeStore()
+  const { tokens: tk, isCyberpunk = false } = useThemeStore()
   const [tab, setTab] = useState<GitTab>('changes')
   const [currentBranch, setCurrentBranch] = useState('main')
   const [files, setFiles] = useState<GitFile[]>(MOCK_FILES)

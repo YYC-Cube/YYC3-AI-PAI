@@ -66,7 +66,7 @@ export interface CRDTCollabPanelProps {
  * ```
  */
 export function CRDTCollabPanel({ visible, onClose }: CRDTCollabPanelProps) {
-  const { tokens: tk, isCyberpunk } = useThemeStore()
+  const { tokens: tk, isCyberpunk = false } = useThemeStore()
 
   // CRDT协作Hook
   const {

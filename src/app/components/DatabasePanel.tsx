@@ -135,7 +135,7 @@ function ConnectionCard({ profile, isActive, tk, isCyberpunk, isZh, onSelect, on
 }
 
 // ===== SQL Console Sub-panel =====
-function SqlConsolePanel({ tk, isZh, isCyberpunk }: { tk: ThemeTokens; isZh: boolean; isCyberpunk: boolean }) {
+function SqlConsolePanel({ tk, isZh, isCyberpunk = false }: { tk: ThemeTokens; isZh: boolean; isCyberpunk: boolean }) {
   const { activeConnId, queryResult, queryRunning, queryHistory, profiles } = useDBStore()
   const [sql, setSql] = useState('SELECT * FROM users LIMIT 10;')
   const [showHistory, setShowHistory] = useState(false)
@@ -471,7 +471,7 @@ function TableExplorerPanel({ tk, isZh }: { tk: ThemeTokens; isZh: boolean }) {
 }
 
 // ===== Backup & Restore Sub-panel =====
-function BackupRestorePanel({ tk, isZh, isCyberpunk }: { tk: ThemeTokens; isZh: boolean; isCyberpunk: boolean }) {
+function BackupRestorePanel({ tk, isZh, isCyberpunk = false }: { tk: ThemeTokens; isZh: boolean; isCyberpunk: boolean }) {
   const { activeConnId, backups, profiles } = useDBStore()
   const [backingUp, setBackingUp] = useState(false)
   const [restoring, setRestoring] = useState<string | null>(null)
@@ -597,7 +597,7 @@ function BackupRestorePanel({ tk, isZh, isCyberpunk }: { tk: ThemeTokens; isZh: 
 
 // ===== Main DatabasePanel =====
 export function DatabasePanel() {
-  const { tokens: tk, isCyberpunk } = useThemeStore()
+  const { tokens: tk, isCyberpunk = false } = useThemeStore()
   const { locale } = useI18n()
   const isZh = locale === 'zh'
   const {

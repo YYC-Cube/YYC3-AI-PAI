@@ -71,7 +71,7 @@ export function IDELeftPanel({
   defaultTab = "file-explorer",
 }: IDELeftPanelProps) {
   const { t, locale } = useI18n();
-  const { tokens: tk, isCyberpunk } = useThemeStore();
+  const { tokens: tk, isCyberpunk = false } = useThemeStore();
   const [activeTab, setActiveTab] = useState<LeftPanelTab>(defaultTab);
 
   const _isZh = locale === "zh";
@@ -547,7 +547,7 @@ function QuickAccessMiniPanel() {
 /** Git 集成迷你面板 */
 function GitMiniPanel() {
   const { t } = useI18n();
-  const { tokens: tk, isCyberpunk } = useThemeStore();
+  const { tokens: tk, isCyberpunk = false } = useThemeStore();
 
   // Mock git state
   const gitState = useMemo(() => ({

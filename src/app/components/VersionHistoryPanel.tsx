@@ -30,7 +30,7 @@ interface VersionHistoryPanelProps {
 }
 
 export function VersionHistoryPanel({ currentContent = '', onRollback }: VersionHistoryPanelProps) {
-  const { tokens: tk, isCyberpunk } = useThemeStore()
+  const { tokens: tk, isCyberpunk = false } = useThemeStore()
   const { locale } = useI18n()
   const isZh = locale === 'zh'
   const {

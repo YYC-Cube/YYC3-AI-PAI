@@ -61,7 +61,7 @@ function getPluginIcon(name: string) { return ICON_MAP[name] ?? Puzzle }
 type SystemTab = 'plugins' | 'security' | 'offline'
 
 // ===== Plugin Tab =====
-function PluginTab({ tk, isZh, _isCyberpunk }: { tk: ThemeTokens; isZh: boolean; _isCyberpunk: boolean }) {
+function PluginTab({ tk, isZh, _isCyberpunk = false }: { tk: ThemeTokens; isZh: boolean; _isCyberpunk: boolean }) {
   const { plugins } = usePluginStore()
   const [subTab, setSubTab] = useState<'installed' | 'marketplace'>('installed')
 
@@ -191,7 +191,7 @@ function PluginTab({ tk, isZh, _isCyberpunk }: { tk: ThemeTokens; isZh: boolean;
 }
 
 // ===== Security Tab =====
-function SecurityTab({ tk, isZh, _isCyberpunk }: { tk: ThemeTokens; isZh: boolean; _isCyberpunk: boolean }) {
+function SecurityTab({ tk, isZh, _isCyberpunk = false }: { tk: ThemeTokens; isZh: boolean; _isCyberpunk: boolean }) {
   const { passphraseSet, vaultUnlocked, encryptedItemCount, auditLog, autoLockTimeout, encryptionStrength } = useCryptoStore()
   const [passphrase, setPassphrase] = useState('')
   const [showPassphrase, setShowPassphrase] = useState(false)
@@ -372,7 +372,7 @@ function SecurityTab({ tk, isZh, _isCyberpunk }: { tk: ThemeTokens; isZh: boolea
 }
 
 // ===== Offline Tab =====
-function OfflineTab({ tk, isZh, _isCyberpunk }: { tk: ThemeTokens; isZh: boolean; _isCyberpunk: boolean }) {
+function OfflineTab({ tk, isZh, _isCyberpunk = false }: { tk: ThemeTokens; isZh: boolean; _isCyberpunk: boolean }) {
   const { networkStatus, isOffline, cacheEntries, totalCacheSize, maxCacheSize, syncQueue, lastSyncTime, isSyncing, swStatus, networkLatency } = useOfflineStore()
 
   const pendingCount = syncQueue.filter(q => q.status === 'pending').length
@@ -521,7 +521,7 @@ function OfflineTab({ tk, isZh, _isCyberpunk }: { tk: ThemeTokens; isZh: boolean
 
 // ===== Main System Panel =====
 export function SystemPanel() {
-  const { tokens: tk, isCyberpunk } = useThemeStore()
+  const { tokens: tk, isCyberpunk = false } = useThemeStore()
   const { locale } = useI18n()
   const isZh = locale === 'zh'
   const { panelVisible: pluginVisible } = usePluginStore()

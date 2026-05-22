@@ -394,7 +394,7 @@ interface CodeGenPanelProps {
 export function CodeGenPanel({ visible, onClose, designJson, onCodeGenerated }: CodeGenPanelProps) {
   const { locale } = useI18n()
   const isZh = locale === 'zh'
-  const { tokens: tk, isCyberpunk } = useThemeStore()
+  const { tokens: tk, isCyberpunk = false } = useThemeStore()
   const [step, setStep] = useState<GenStep>('idle')
   const [files, setFiles] = useState<GeneratedFile[]>([])
   const [selectedFileId, setSelectedFileId] = useState<string | null>(null)

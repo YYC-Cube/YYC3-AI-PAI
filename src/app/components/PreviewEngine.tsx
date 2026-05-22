@@ -242,7 +242,7 @@ export const PreviewEngine = memo(function PreviewEngine({
 }: PreviewEngineProps) {
   const { locale } = useI18n()
   const isZh = locale === 'zh'
-  const { tokens: tk, isCyberpunk } = useThemeStore()
+  const { tokens: tk, isCyberpunk = false } = useThemeStore()
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const prevHTMLRef = useRef<string>('')
   const [diff, setDiff] = useState<DiffResult | null>(null)

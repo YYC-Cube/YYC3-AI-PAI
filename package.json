@@ -18,7 +18,11 @@
     "deploy": "bash scripts/deploy.sh",
     "deploy:monitor": "bash scripts/monitor.sh ai-pai.yyc3.top",
     "deploy:health": "curl -I https://ai-pai.yyc3.top",
-    "deploy:check": "curl -o /dev/null -s -w \"HTTP: %{http_code}\\nTime: %{time_total}s\\n\" https://ai-pai.yyc3.top"
+    "deploy:check": "curl -o /dev/null -s -w \"HTTP: %{http_code}\\nTime: %{time_total}s\\n\" https://ai-pai.yyc3.top",
+    "monitor:start": "node scripts/monitoring/monitor-server.js",
+    "monitor:check": "bash scripts/quick-monitor.sh",
+    "monitor:baseline": "bash scripts/baseline-performance.sh",
+    "monitor:alert": "bash scripts/alert-monitoring.sh"
   },
   "dependencies": {
     "@emotion/react": "11.14.0",

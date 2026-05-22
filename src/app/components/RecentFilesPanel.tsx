@@ -58,7 +58,7 @@ interface RecentFilesPanelProps {
 }
 
 export function RecentFilesPanel({ onOpenFile }: RecentFilesPanelProps) {
-  const { tokens: tk, isCyberpunk } = useThemeStore()
+  const { tokens: tk, isCyberpunk = false } = useThemeStore()
   const { locale } = useI18n()
   const isZh = locale === 'zh'
   const { recentFiles, recentPanelVisible, closeRecentPanel, removeRecentFile, clearRecentFiles } = useFileStore()

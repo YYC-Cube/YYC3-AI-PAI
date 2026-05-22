@@ -43,7 +43,7 @@ function getFileColor(ext: string, tk: { primary: string; success: string; warni
 }
 
 export function EditorTabBar() {
-  const { tokens: tk, isCyberpunk } = useThemeStore()
+  const { tokens: tk, isCyberpunk = false } = useThemeStore()
   const { locale } = useI18n()
   const isZh = locale === 'zh'
   const { openTabs, activeTabId, activateTab, closeTab, togglePinTab, closeOtherTabs, closeTabsToRight } = useIDEStore()

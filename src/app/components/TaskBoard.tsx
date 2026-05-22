@@ -117,7 +117,7 @@ interface DragPayload {
 export function TaskBoard({ visible, onClose }: TaskBoardProps) {
   const { t, locale } = useI18n()
   const isZh = locale === 'zh'
-  const { tokens: tk, isCyberpunk } = useThemeStore()
+  const { tokens: tk, isCyberpunk = false } = useThemeStore()
   const { tasks, add, remove, moveStatus, reorder } = useTaskStore()
 
   // Column order persistence

@@ -107,7 +107,7 @@ const SEVERITY_ORDER: Record<DiagSeverity, number> = { error: 0, warning: 1, inf
 
 export function DiagnosticsPanel({ visible, onClose, currentFile, onApplyFix }: DiagnosticsPanelProps) {
   const { t, locale } = useI18n()
-  const { tokens: tk, isCyberpunk } = useThemeStore()
+  const { tokens: tk, isCyberpunk = false } = useThemeStore()
   const isZh = locale === 'zh'
   const [filter, setFilter] = useState<DiagSeverity | 'all'>('all')
   const [catFilter, setCatFilter] = useState<DiagCategory | 'all'>('all')

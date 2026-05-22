@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-05-22T04:23:32Z",
+  "availability": "200",
+  "responseTime": "0.809014",
+  "dnsTime": "0.004376",
+  "connectTime": "0.333974",
+  "sslTime": "0.831641",
+  "ttfb": "1.064834",
+  "downloadTime": "",
+  "pageSize": "    3775"
+}

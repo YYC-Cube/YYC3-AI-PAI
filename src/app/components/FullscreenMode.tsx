@@ -93,7 +93,7 @@ export function FullscreenMode({ onSwitchMode, onSwitchToIDE, onOpenSettings, on
 }) {
   const { t, locale } = useI18n();
   const { openModelSettings, getActiveModel, sendToActiveModel, activeModelId, connectivityMap } = useModelStore();
-  const { tokens, isCyberpunk } = useThemeStore();
+  const { tokens, isCyberpunk = false } = useThemeStore();
   const [activeTab, setActiveTab] = useState(0);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");

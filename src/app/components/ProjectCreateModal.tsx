@@ -25,7 +25,7 @@ import { Z_INDEX, BLUR } from '../store/theme-store'
 export function ProjectCreateModal() {
   const { locale } = useI18n()
   const store = useProjectStore()
-  const { tokens: tk, isCyberpunk } = useThemeStore()
+  const { tokens: tk, isCyberpunk = false } = useThemeStore()
   const logRef = useRef<HTMLDivElement>(null)
 
   // Auto-scroll logs

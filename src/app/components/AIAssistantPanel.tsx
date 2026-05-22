@@ -59,7 +59,7 @@ export interface AIAssistantPanelProps {
  * ```
  */
 export function AIAssistantPanel({ visible, onClose }: AIAssistantPanelProps) {
-  const { tokens: tk, isCyberpunk } = useThemeStore()
+  const { tokens: tk, isCyberpunk = false } = useThemeStore()
 
   // WebGPU推理Hook
   const {

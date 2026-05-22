@@ -95,7 +95,7 @@ interface NotificationCenterProps {
 
 export function NotificationCenter({ visible, onClose }: NotificationCenterProps) {
   const { t, locale } = useI18n()
-  const { tokens: tk, isCyberpunk } = useThemeStore()
+  const { tokens: tk, isCyberpunk = false } = useThemeStore()
   const [notifications, setNotifications] = useState<Notification[]>(generateMockNotifications)
   const [activeTab, setActiveTab] = useState<TabFilter>('all')
 

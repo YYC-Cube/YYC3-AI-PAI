@@ -16,6 +16,10 @@ import ReactDOM from 'react-dom/client'
 import App from './app/App'
 import './styles/index.css'
 
+// 初始化生产环境监控系统
+import { initMonitoring } from './app/monitoring/SimpleMonitor'
+initMonitoring()
+
 const rootElement = document.getElementById('root')
 if (!rootElement) {
   throw new Error('Failed to find the root element')

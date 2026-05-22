@@ -48,7 +48,7 @@ const MAX_RESULTS = 50
 export function GlobalSearch({ visible, onClose, fileContentMap, onSelectFile, onReplace }: GlobalSearchProps) {
   const { t, locale } = useI18n()
   const isZh = locale === 'zh'
-  const { tokens: tk, isCyberpunk } = useThemeStore()
+  const { tokens: tk, isCyberpunk = false } = useThemeStore()
   const [query, setQuery] = useState('')
   const [replaceText, setReplaceText] = useState('')
   const [showReplace, setShowReplace] = useState(false)

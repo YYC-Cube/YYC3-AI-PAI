@@ -31,7 +31,7 @@ const responseKeys = ["response1", "response2", "response3", "response4"] as con
 /** AI Chat body — fully self-contained with own state */
 export function IDEChatPanel() {
   const { t, locale } = useI18n();
-  const { tokens, isCyberpunk } = useThemeStore();
+  const { tokens, isCyberpunk = false } = useThemeStore();
   const { openModelSettings, getActiveModel, sendToActiveModel, activeModelId, connectivityMap, modelSettingsOpen: msOpen } = useModelStore();
   const projectStore = useProjectStore();
   const borderColor = tokens.border;

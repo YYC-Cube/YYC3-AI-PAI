@@ -194,7 +194,7 @@ function buildCollabDecorations(
 function FallbackEditor({
   code, fileName, onChange, readOnly,
 }: { code: string; fileName: string; onChange?: (v: string) => void; readOnly: boolean }) {
-  const { tokens, isCyberpunk } = useThemeStore()
+  const { tokens, isCyberpunk = false } = useThemeStore()
   return (
     <div className="flex-1 flex flex-col h-full" style={{ background: tokens.background }}>
       <div className="flex items-center gap-2 px-3 py-1.5" style={{
@@ -258,7 +258,7 @@ export const CyberEditor = forwardRef<CyberEditorHandle, CyberEditorProps>(funct
   const monacoRef = useRef<MonacoNamespace | null>(null)
   const _decorationsRef = useRef<string[]>([])
   const collab = useCollabStore()
-  const { tokens, isCyberpunk } = useThemeStore()
+  const { tokens, isCyberpunk = false } = useThemeStore()
   const { prefs: editorPrefs } = useEditorPrefs()
   const [editorReady, setEditorReady] = useState(false)
   const [MonacoEditor, setMonacoEditor] = useState<React.ComponentType<Record<string, unknown>> | null>(null)

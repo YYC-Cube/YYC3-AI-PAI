@@ -41,7 +41,7 @@ export function IDEStatusBar({
   onApplyPreset,
 }: IDEStatusBarProps) {
   const { t, locale } = useI18n();
-  const { tokens, isCyberpunk } = useThemeStore();
+  const { tokens, isCyberpunk = false } = useThemeStore();
   const { getActiveModel, connectivityMap } = useModelStore();
   const { prefs: editorPrefs } = useEditorPrefs();
   const ideStore = useIDEStore();

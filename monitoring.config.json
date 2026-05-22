@@ -1,0 +1,29 @@
+{
+  "monitoring": {
+    "enabled": true,
+    "updateInterval": 30000,
+    "alertThresholds": {
+      "errorRate": { "warning": 0.1, "critical": 0.5 },
+      "responseTime": { "warning": 2000, "critical": 5000 },
+      "memoryUsage": { "warning": 100000000, "critical": 200000000 },
+      "systemLoad": { "warning": 70, "critical": 90 }
+    }
+  },
+  "alerts": {
+    "enabled": true,
+    "channels": {
+      "slack": {
+        "enabled": true,
+        "webhook": "${SLACK_WEBHOOK:-not_set}"
+      },
+      "email": {
+        "enabled": false,
+        "recipients": []
+      }
+    }
+  },
+  "dashboard": {
+    "url": "/monitoring-status",
+    "authentication": false
+  }
+}

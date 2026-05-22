@@ -62,7 +62,7 @@ const timeRangeKeys = ["last1h", "last6h", "last24h", "last7d"];
 
 export function StatDetailPanel({ stat, onClose }: StatDetailPanelProps) {
   const { t } = useI18n();
-  const { tokens: tk, isCyberpunk } = useThemeStore();
+  const { tokens: tk, isCyberpunk = false } = useThemeStore();
   const [selectedRange, setSelectedRange] = useState(0);
   const [liveValue, setLiveValue] = useState(stat.value);
   const [liveHistory, setLiveHistory] = useState<{ time: string; value: number }[]>([]);

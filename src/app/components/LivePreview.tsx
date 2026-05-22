@@ -347,7 +347,7 @@ export const LivePreview = memo(function LivePreview({
 }: LivePreviewProps) {
   const { locale } = useI18n()
   const isZh = locale === 'zh'
-  const { tokens: tk, isCyberpunk } = useThemeStore()
+  const { tokens: tk, isCyberpunk = false } = useThemeStore()
   const preview = usePreviewStore()
 
   const iframeRef = useRef<HTMLIFrameElement>(null)

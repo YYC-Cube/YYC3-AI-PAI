@@ -32,7 +32,7 @@ const responseKeys = ["response1", "response2", "response3", "response4"];
 export function FloatingWidget({ onSwitchMode }: { onSwitchMode: () => void }) {
   const { t } = useI18n();
   const { getActiveModel, sendToActiveModel } = useModelStore();
-  const { tokens, isCyberpunk } = useThemeStore();
+  const { tokens, isCyberpunk = false } = useThemeStore();
   const [pos, setPos] = useState({ x: 100, y: 100 });
   const [size, setSize] = useState({ w: 420, h: 520 });
   const [minimized, setMinimized] = useState(false);

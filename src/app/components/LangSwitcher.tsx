@@ -16,7 +16,7 @@ import { useThemeStore } from "../store/theme-store";
 
 export function LangSwitcher({ compact = false }: { compact?: boolean }) {
   const { locale, toggleLocale } = useI18n();
-  const { tokens, isCyberpunk } = useThemeStore();
+  const { tokens, isCyberpunk = false } = useThemeStore();
 
   return (
     <button

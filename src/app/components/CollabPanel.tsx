@@ -23,7 +23,7 @@ export function CollabPanel({ visible, onClose }: { visible: boolean; onClose: (
   const { locale } = useI18n()
   const isZh = locale === 'zh'
   const collab = useCollabStore()
-  const { tokens: tk, isCyberpunk } = useThemeStore()
+  const { tokens: tk, isCyberpunk = false } = useThemeStore()
 
   const _remoteUsers = useMemo(() => collab.getRemoteUsers(), [collab])
   const recentOps = useMemo(() => [...collab.operations].reverse().slice(0, 15), [collab.operations])

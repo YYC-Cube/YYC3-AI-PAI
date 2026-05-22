@@ -80,7 +80,7 @@ export function IDEMode({ onSwitchMode, onOpenSettings, onOpenNotifications, onO
 }) {
   const { t } = useI18n();
   const { openModelSettings } = useModelStore();
-  const { tokens, isCyberpunk } = useThemeStore();
+  const { tokens, isCyberpunk = false } = useThemeStore();
   const ideStore = useIDEStore();
   const projectStore = useProjectStore();
   const collab = useCollabStore();

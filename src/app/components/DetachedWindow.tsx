@@ -30,7 +30,7 @@ interface DetachedWindowProps {
  * 支持标题栏拖拽、角落缩放、最小化/最大化/关闭
  */
 export function DetachedWindowComponent({ window: win, renderContent }: DetachedWindowProps) {
-  const { tokens, isCyberpunk } = useThemeStore();
+  const { tokens, isCyberpunk = false } = useThemeStore();
   const { t } = useI18n();
   const panelDnD = usePanelDnD();
   const headerRef = useRef<HTMLDivElement>(null);

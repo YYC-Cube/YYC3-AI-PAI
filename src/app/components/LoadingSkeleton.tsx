@@ -15,7 +15,7 @@ import { useThemeStore } from "../store/theme-store";
 
 /** Full-screen skeleton for mode components (IDEMode, FullscreenMode) */
 export function ModeSkeleton() {
-  const { tokens, isCyberpunk } = useThemeStore();
+  const { tokens, isCyberpunk = false } = useThemeStore();
 
   return (
     <div

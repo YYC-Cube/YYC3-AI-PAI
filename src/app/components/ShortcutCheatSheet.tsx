@@ -78,7 +78,7 @@ const CHEAT_GROUPS: {
 export function ShortcutCheatSheet({ visible, onClose }: ShortcutCheatSheetProps) {
   const { t, locale } = useI18n()
   const _isZh = locale === 'zh'
-  const { tokens: tk, isCyberpunk } = useThemeStore()
+  const { tokens: tk, isCyberpunk = false } = useThemeStore()
   const { shortcuts } = useShortcutStore()
   const [query, setQuery] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)

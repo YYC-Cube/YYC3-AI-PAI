@@ -58,7 +58,7 @@ const SESSION_TYPE_ICONS: Record<SessionType, typeof MessageSquare> = {
 export function MultiInstancePanel({ visible, onClose }: MultiInstancePanelProps) {
   const { t: _t, locale } = useI18n()
   const isZh = locale === 'zh'
-  const { tokens: tk, isCyberpunk } = useThemeStore()
+  const { tokens: tk, isCyberpunk = false } = useThemeStore()
   const store = useMultiInstanceStore()
   const [tab, setTab] = useState<PanelTab>('instances')
   const [expandedId, setExpandedId] = useState<string | null>(null)

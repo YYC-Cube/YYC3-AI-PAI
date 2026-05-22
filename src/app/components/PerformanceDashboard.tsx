@@ -46,7 +46,7 @@ interface PerformanceDashboardProps {
 
 export function PerformanceDashboard({ visible, onClose }: PerformanceDashboardProps) {
   const { t: _t } = useI18n()
-  const { tokens: tk, isCyberpunk } = useThemeStore()
+  const { tokens: tk, isCyberpunk = false } = useThemeStore()
 
   // 从store获取真实数据
   const webVitals = usePerformanceStore((state) => state.webVitals)

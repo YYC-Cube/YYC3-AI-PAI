@@ -155,7 +155,7 @@ interface AIAssistPanelProps {
 export function AIAssistPanel({ visible, onClose, context, onApplyCode }: AIAssistPanelProps) {
   const { locale } = useI18n()
   const isZh = locale === 'zh'
-  const { tokens: tk, isCyberpunk } = useThemeStore()
+  const { tokens: tk, isCyberpunk = false } = useThemeStore()
   const { getActiveModel, sendToActiveModel } = useModelStore()
   const [suggestions, setSuggestions] = useState<AISuggestion[]>([])
   const [loading, setLoading] = useState(false)
