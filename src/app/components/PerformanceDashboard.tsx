@@ -111,13 +111,14 @@ export function PerformanceDashboard({ visible, onClose }: PerformanceDashboardP
   }
 
   // 图表颜色
+  const safeIsCyberpunk = isCyberpunk ?? false // 双重保险
   const chartColors = {
-    cpu: isCyberpunk ? '#00f0ff' : '#3b82f6',
-    mem: isCyberpunk ? '#ff79c6' : '#8b5cf6',
-    net: isCyberpunk ? '#00ff88' : '#10b981',
-    lat: isCyberpunk ? '#ffaa00' : '#f59e0b',
-    grid: isCyberpunk ? 'rgba(0,240,255,0.06)' : 'rgba(0,0,0,0.04)',
-    axis: isCyberpunk ? 'rgba(0,240,255,0.3)' : 'rgba(0,0,0,0.2)',
+    cpu: safeIsCyberpunk ? '#00f0ff' : '#3b82f6',
+    mem: safeIsCyberpunk ? '#ff79c6' : '#8b5cf6',
+    net: safeIsCyberpunk ? '#00ff88' : '#10b981',
+    lat: safeIsCyberpunk ? '#ffaa00' : '#f59e0b',
+    grid: safeIsCyberpunk ? 'rgba(0,240,255,0.06)' : 'rgba(0,0,0,0.04)',
+    axis: safeIsCyberpunk ? 'rgba(0,240,255,0.3)' : 'rgba(0,0,0,0.2)',
   }
 
   if (!visible) return null

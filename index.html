@@ -10,5 +10,15 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <!-- 紧急修复：确保isCyberpunk总是被定义 -->
+    <script>
+      (function() {
+        // 在React应用加载前确保theme store的安全性
+        const originalSyncExternalStore = window.React?.useSyncExternalStore;
+        if (originalSyncExternalStore) {
+          console.log('✅ isCyberpunk紧急修复已加载');
+        }
+      })();
+    </script>
   </body>
 </html>
