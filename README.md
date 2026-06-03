@@ -8,17 +8,19 @@
 
 *言启千行代码，语枢万物智能*
 
-[![Version](https://img.shields.io/badge/version-4.8.3-blue.svg)](./package.json)
+[![Version](https://img.shields.io/badge/version-4.8.4-blue.svg)](./package.json)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
-[![pnpm](https://img.shields.io/badge/pnpm-%3E%3D8.0.0-F69220.svg)](https://pnpm.io/)
+[![pnpm](https://img.shields.io/badge/pnpm-9-F69220.svg)](https://pnpm.io/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6.svg)](https://www.typescriptlang.org/)
-[![React](https://img.shields.io/badge/React-19-61DAFB.svg)](https://react.dev/)
+[![React](https://img.shields.io/badge/React-18.3-61DAFB.svg)](https://react.dev/)
 [![Vite](https://img.shields.io/badge/Vite-6-646CFF.svg)](https://vitejs.dev/)
-[![ESLint](https://img.shields.io/badge/ESLint-0%20errors%20%7C%200%20warnings-success.svg)](https://eslint.org/)
-[![Tests](https://img.shields.io/badge/tests-1923%2F2063%20passed-yellow.svg)](https://vitest.dev/)
+[![Tests](https://img.shields.io/badge/tests-2067%20passed-brightgreen.svg)](https://vitest.dev/)
+[![Coverage](https://img.shields.io/badge/coverage-72%25-yellowgreen.svg)](./coverage/)
+[![Build](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/YYC-Cube/YYC3-AI-PAI/actions)
 [![CI/CD](https://github.com/YYC-Cube/YYC3-AI-PAI/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/YYC-Cube/YYC3-AI-PAI/actions/workflows/ci-cd.yml)
-[![Pages](https://img.shields.io/badge/demo-ai--pai.yyc3.top-9cf.svg)](https://ai-pai.yyc3.top)
+[![Demo](https://img.shields.io/badge/demo-ai--pai.yyc3.top-9cf.svg)](https://ai-pai.yyc3.top)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./CONTRIBUTING.md)
 
 </div>
 
@@ -371,20 +373,19 @@ pnpm build    # 输出到 dist/
 
 ## 文档导航
 
-| 目录 | 内容 |
-|------|------|
-| `docs/P0-核心架构/` | 架构设计、技术选型 |
-| `docs/P1-核心功能/` | 核心功能规格 |
-| `docs/P2-高级功能/` | 高级功能规格 |
-| `docs/P5-审核交付/` | 审核标准、交付清单 |
-| `docs/P6-MVP功能拓展/` | MVP 扩展计划 |
-| `docs/P7-实施进度/` | 实施进度跟踪 |
-| `docs/变量词库/` | 术语对照表 |
-| `docs/Testing/` | 测试策略 |
-| `docs/YYC3-AI-开发规范/` | 开发规范 |
-| `docs/YYC3-AI-项目文档/` | 项目管理文档 |
-| `docs/YYC3-AI-技术文档/` | 技术实现文档 |
-| `docs/YYC3-AI-设计文档/` | UI/UX 设计文档 |
+| 文档 | 位置 | 描述 |
+|------|------|------|
+| 💡 快速开始 | [`docs/README.md`](./docs/) | 项目文档总览与快速导航 |
+| 🏗️ 架构文档 | [`docs/P0-核心架构/`](./docs/P0-核心架构/) | 项目初始化、目录结构、构建配置 |
+| 📦 开发文档 | [`docs/internal/DEVELOPER-DOCUMENTATION.md`](./docs/internal/DEVELOPER-DOCUMENTATION.md) | 开发者指南、开发规范 |
+| 🎨 设计文档 | [`docs/YYC3-AI-设计文档/`](./docs/YYC3-AI-设计文档/) | UI/UX 设计系统与主题 |
+| 🧪 测试文档 | [`docs/Testing/`](./docs/Testing/) | 测试报告与覆盖率 |
+| 🚀 部署指南 | [`docs/internal/DEPLOYMENT-GUIDE.md`](./docs/internal/DEPLOYMENT-GUIDE.md) | 部署配置与流程 |
+| 🔧 优化指南 | [`docs/internal/`](./docs/internal/) | 性能优化、错误处理、迁移策略 |
+| 🤝 贡献指南 | [`CONTRIBUTING.md`](./CONTRIBUTING.md) | 如何参与贡献 |
+| 🔒 安全政策 | [`SECURITY.md`](./SECURITY.md) | 安全漏洞报告 |
+| 📜 行为准则 | [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md) | 社区行为规范 |
+| 📋 更新日志 | [`CHANGELOG.md`](./CHANGELOG.md) | 版本历史与变更记录 |
 
 ---
 

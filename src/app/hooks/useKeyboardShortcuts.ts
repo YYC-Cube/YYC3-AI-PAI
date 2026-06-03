@@ -48,10 +48,10 @@ function matchesEvent(parsed: ReturnType<typeof parseKeys>, e: KeyboardEvent): b
   // Key comparison (handle special keys)
   const keyMatch = key === 'escape' ? e.key === 'Escape'
     : key === 'enter' ? e.key === 'Enter'
-    : key === '`' ? e.key === '`'
-    : key === ',' ? e.key === ','
-    : key === '/' ? e.key === '/'
-    : e.key.toLowerCase() === key
+      : key === '`' ? e.key === '`'
+        : key === ',' ? e.key === ','
+          : key === '/' ? e.key === '/'
+            : e.key.toLowerCase() === key
 
   // If mod is specified, don't also require ctrl/meta separately
   if (mod) {

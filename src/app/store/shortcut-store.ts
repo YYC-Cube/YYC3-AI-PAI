@@ -48,6 +48,7 @@ export const DEFAULT_SHORTCUTS: Record<string, ShortcutDef> = {
   openDiagnostics: { internal: 'mod+shift+d',  display: '⌘ Shift D' },
   openActivityLog: { internal: 'mod+shift+j',  display: '⌘ Shift J' },
   shortcutCheatSheet: { internal: 'mod+/',     display: '⌘ /' },
+  agentWorkflow:    { internal: 'mod+shift+o',  display: '⌘ Shift O' },
 }
 
 const LS_KEY = 'yyc3_shortcut_overrides'

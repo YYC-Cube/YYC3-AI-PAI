@@ -546,6 +546,8 @@ export function SystemPanel() {
     offlineStoreActions.closePanel()
   }, [])
 
+  if (!_visible) return null
+
   const TABS: Array<{ id: SystemTab; label: string; icon: typeof Puzzle }> = [
     { id: 'plugins', label: isZh ? '插件' : 'Plugins', icon: Puzzle },
     { id: 'security', label: isZh ? '安全' : 'Security', icon: Shield },

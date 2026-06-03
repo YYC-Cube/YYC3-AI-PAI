@@ -144,7 +144,7 @@ async function deriveKey(passphrase: string, salt: Uint8Array, iterations?: numb
   const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(passphrase), 'PBKDF2', false, ['deriveKey'])
   const iters = iterations ?? PBKDF2_ITERATIONS[state.encryptionStrength]
   return crypto.subtle.deriveKey(
-    { name: 'PBKDF2', salt, iterations: iters, hash: 'SHA-256' },
+    { name: 'PBKDF2', salt: salt.buffer as ArrayBuffer, iterations: iters, hash: 'SHA-256' },
     keyMaterial,
     { name: 'AES-GCM', length: 256 },
     false,
@@ -156,11 +156,14 @@ async function deriveKey(passphrase: string, salt: Uint8Array, iterations?: numb
 async function aesEncrypt(key: CryptoKey, plaintext: string, salt: Uint8Array): Promise<EncryptedPayload> {
   const iv = generateIV()
   const enc = new TextEncoder()
-  const cipherBuf = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(plaintext))
+  const plainBuf = enc.encode(plaintext)
+  const inputBuf = new ArrayBuffer(plainBuf.length)
+  new Uint8Array(inputBuf).set(plainBuf)
+  const cipherBuf = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, inputBuf)
   return {
-    iv: bufToBase64(iv.buffer),
+    iv: bufToBase64(iv.buffer as ArrayBuffer),
     data: bufToBase64(cipherBuf),
-    salt: bufToBase64(salt.buffer),
+    salt: bufToBase64(salt.buffer as ArrayBuffer),
     algorithm: 'AES-GCM-256',
     timestamp: Date.now(),
   }
@@ -189,7 +192,7 @@ export const cryptoStoreActions = {
       const verifyPayload = await aesEncrypt(key, 'YYC3_VAULT_VERIFY_TOKEN_v4.8.0', salt)
 
       // 存储盐和验证令牌
-      localStorage.setItem(LS_SALT_KEY, bufToBase64(salt.buffer))
+      localStorage.setItem(LS_SALT_KEY, bufToBase64(salt.buffer as ArrayBuffer))
       localStorage.setItem(LS_VERIFY_KEY, JSON.stringify(verifyPayload))
 
       _derivedKey = key

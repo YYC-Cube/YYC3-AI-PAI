@@ -192,14 +192,7 @@ export function usePerformanceMonitor(options: UsePerformanceMonitorOptions = {}
           networkSpeed,
         })
 
-        if (optionsRef.current.debug) {
-          console.warn('[Performance Monitor] System metrics:', {
-            cpu: cpuUsage.toFixed(1),
-            memory: memoryUsage.toFixed(1),
-            latency: latency.toFixed(0),
-            networkSpeed: networkSpeed.toFixed(2),
-          })
-        }
+
       } catch (error) {
         console.error('[Performance Monitor] Failed to collect system metrics:', error)
       }

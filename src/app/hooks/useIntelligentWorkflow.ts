@@ -317,7 +317,7 @@ export function useIntelligentWorkflow(
 
   // 自动初始化
   useEffect(() => {
-    if (autoInitialize) {
+    if (autoInitialize && import.meta.env.DEV) {
       console.warn('[Workflow] Intelligent workflow system initialized')
     }
   }, [autoInitialize])

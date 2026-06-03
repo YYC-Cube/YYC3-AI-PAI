@@ -364,14 +364,25 @@ function AppContent() {
     { keys: shortcuts.openSettings?.internal ?? 'mod+,', action: () => setSettingsVisible((v) => !v) },
     { keys: shortcuts.modelSettings?.internal ?? 'mod+shift+m', action: () => openModelSettings() },
     { keys: shortcuts.globalSearch?.internal ?? 'mod+shift+f', action: openGlobalSearch },
-    // Panel shortcuts — dispatch custom events for IDEMode to handle
+    // === Editor shortcuts ===
+    { keys: shortcuts.save?.internal ?? 'mod+s', action: () => { /* handled by IDE/editor */ } },
+    { keys: shortcuts.undo?.internal ?? 'mod+z', action: () => { /* handled by IDE/editor */ } },
+    { keys: shortcuts.redo?.internal ?? 'mod+shift+z', action: () => { /* handled by IDE/editor */ } },
+    { keys: shortcuts.find?.internal ?? 'mod+f', action: () => { /* handled by IDE/editor */ } },
+    { keys: shortcuts.replace?.internal ?? 'mod+h', action: () => { /* handled by IDE/editor */ } },
+    // === AI shortcuts ===
+    { keys: shortcuts.aiAssist?.internal ?? 'mod+shift+a', action: () => { setMode('ide'); window.dispatchEvent(new CustomEvent('yyc3:open-panel', { detail: 'aiAssist' })) } },
+    { keys: shortcuts.codeGen?.internal ?? 'mod+shift+g', action: () => { setMode('ide'); window.dispatchEvent(new CustomEvent('yyc3:open-panel', { detail: 'codeGen' })) } },
+    // === Panel shortcuts — dispatch custom events for IDEMode to handle ===
     { keys: shortcuts.openSnippets?.internal ?? 'mod+shift+s', action: () => { setMode('ide'); window.dispatchEvent(new CustomEvent('yyc3:open-panel', { detail: 'snippets' })) } },
     { keys: shortcuts.openTaskBoard?.internal ?? 'mod+shift+b', action: () => { setMode('ide'); window.dispatchEvent(new CustomEvent('yyc3:open-panel', { detail: 'taskBoard' })) } },
     { keys: shortcuts.openGitPanel?.internal ?? 'mod+shift+h', action: () => { setMode('ide'); window.dispatchEvent(new CustomEvent('yyc3:open-panel', { detail: 'git' })) } },
     { keys: shortcuts.openPerformance?.internal ?? 'mod+shift+p', action: () => { setMode('ide'); window.dispatchEvent(new CustomEvent('yyc3:open-panel', { detail: 'performance' })) } },
     { keys: shortcuts.openDiagnostics?.internal ?? 'mod+shift+d', action: () => { setMode('ide'); window.dispatchEvent(new CustomEvent('yyc3:open-panel', { detail: 'diagnostics' })) } },
     { keys: shortcuts.openActivityLog?.internal ?? 'mod+shift+j', action: () => { setMode('ide'); window.dispatchEvent(new CustomEvent('yyc3:open-panel', { detail: 'activityLog' })) } },
-    { keys: shortcuts.agentWorkflow?.internal ?? 'mod+shift+a', action: () => setAgentWorkflowVisible(v => !v) },
+    // Agent Workflow — use mod+shift+o to avoid collision with aiAssist (mod+shift+a)
+    { keys: shortcuts.agentWorkflow?.internal ?? 'mod+shift+o', action: () => setAgentWorkflowVisible(v => !v) },
+    { keys: shortcuts.newProject?.internal ?? 'mod+shift+n', action: () => { setMode('ide'); window.dispatchEvent(new CustomEvent('yyc3:open-panel', { detail: 'newProject' })) } },
     // Shortcut cheat sheet
     { keys: shortcuts.shortcutCheatSheet?.internal ?? 'mod+/', action: () => setCheatSheetVisible(v => !v) },
     {
@@ -381,6 +392,10 @@ function AppContent() {
         else if (settingsVisible) setSettingsVisible(false)
         else if (notificationsVisible) setNotificationsVisible(false)
         else if (cheatSheetVisible) setCheatSheetVisible(false)
+        else if (performanceVisible) setPerformanceVisible(false)
+        else if (aiAssistantVisible) setAIAssistantVisible(false)
+        else if (crdtCollabVisible) setCRDTCollabVisible(false)
+        else if (intelligentWorkflowVisible) setIntelligentWorkflowVisible(false)
         else if (agentWorkflowVisible) setAgentWorkflowVisible(false)
       }, preventDefault: false
     },

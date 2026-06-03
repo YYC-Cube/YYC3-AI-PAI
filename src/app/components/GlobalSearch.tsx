@@ -11,13 +11,17 @@
  * @tags search,global,ui,component
  */
 
-import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import {
-  Search, File, X, CornerDownLeft, FolderOpen,
-  FileText, Hash, ArrowRight,
+  ArrowRight,
+  CornerDownLeft,
+  File,
+  FolderOpen,
+  Search,
+  X
 } from 'lucide-react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useI18n } from '../i18n/context'
-import { useThemeStore, Z_INDEX, BLUR } from '../store/theme-store'
+import { BLUR, Z_INDEX, useThemeStore } from '../store/theme-store'
 
 /** A single search result */
 interface SearchResult {
@@ -60,7 +64,9 @@ export function GlobalSearch({ visible, onClose, fileContentMap, onSelectFile, o
   const replaceRef = useRef<HTMLInputElement>(null)
   const listRef = useRef<HTMLDivElement>(null)
 
+
   // Reset on open
+
   useEffect(() => {
     if (visible) {
       setQuery('')
@@ -164,7 +170,7 @@ export function GlobalSearch({ visible, onClose, fileContentMap, onSelectFile, o
   useEffect(() => {
     if (!visible) return
     const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') { onClose(); return }
+      if (e.key === 'Escape') { e.stopPropagation(); onClose(); return }
       if (e.key === 'ArrowDown') {
         e.preventDefault()
         setSelectedIndex((i) => Math.min(i + 1, totalCount - 1))
@@ -179,10 +185,10 @@ export function GlobalSearch({ visible, onClose, fileContentMap, onSelectFile, o
         handleSelect(r.fileName, r.matchedLines[0]?.lineNumber)
       }
     }
-    window.addEventListener('keydown', handler)
-  if (!visible) return undefined
+    window.addEventListener('keydown', handler, true)
+    if (!visible) return undefined
 
-    return () => window.removeEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler, true)
   }, [visible, totalCount, results, selectedIndex, onClose, handleSelect])
 
   // Total match count
@@ -191,7 +197,7 @@ export function GlobalSearch({ visible, onClose, fileContentMap, onSelectFile, o
   return (
     <div
       className="fixed inset-0 flex items-start justify-center pt-[12vh]"
-      style={{ zIndex: Z_INDEX.topModal + 60, background: tk.overlayBg, backdropFilter: BLUR.md }}
+      style={{ zIndex: Z_INDEX.topModal + 60, background: tk.overlayBg, backdropFilter: BLUR.md, display: visible ? undefined : 'none' }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
       <div
@@ -272,6 +278,14 @@ export function GlobalSearch({ visible, onClose, fileContentMap, onSelectFile, o
           >
             ESC
           </kbd>
+          <button
+            onClick={onClose}
+            className="p-1 rounded transition-all hover:opacity-70 ml-1"
+            style={{ color: tk.foregroundMuted }}
+            title={isZh ? '关闭' : 'Close'}
+          >
+            <X size={14} />
+          </button>
         </div>
 
         {/* Replace input row + Extension filter */}

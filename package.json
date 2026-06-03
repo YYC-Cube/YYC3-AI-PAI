@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "dev": "vite --port 3100 --host",
+    "dev": "vite --port 3197 --host",
     "build": "vite build",
     "test": "vitest run",
     "test:watch": "vitest",

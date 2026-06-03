@@ -593,6 +593,7 @@ export const useIntelligentWorkflowStore = create<IntelligentWorkflowStoreState 
             nodes: new Map(),
             startNodeId: '',
             executionMode: result.workflow.executionMode || 'sequential',
+            aiGenerated: true,
           })
           result.workflow.id = workflow.id
         }

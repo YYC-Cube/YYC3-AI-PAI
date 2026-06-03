@@ -99,13 +99,13 @@ class MonacoPreloader {
     }
 
     this.state = 'loading'
-    console.warn(`[MonacoPreloader] Preloading Monaco (${priority} priority)...`)
+    if (import.meta.env.DEV) console.warn(`[MonacoPreloader] Preloading Monaco (${priority} priority)...`)
 
     const startTime = performance.now()
 
     this.loadPromise = this.doPreload(priority).then((success) => {
       const duration = performance.now() - startTime
-      console.warn(`[MonacoPreloader] Preload ${success ? 'succeeded' : 'failed'} in ${duration.toFixed(2)}ms`)
+      if (import.meta.env.DEV) console.warn(`[MonacoPreloader] Preload ${success ? 'succeeded' : 'failed'} in ${duration.toFixed(2)}ms`)
 
       this.state = success ? 'loaded' : 'failed'
       this.loadPromise = null
@@ -169,7 +169,7 @@ class MonacoPreloader {
   preloadWithDelay(delay: number = 3000): void {
     if (this.state !== 'idle') return
 
-    console.warn(`[MonacoPreloader] Scheduled preload in ${delay}ms`)
+    if (import.meta.env.DEV) console.warn(`[MonacoPreloader] Scheduled preload in ${delay}ms`)
 
     this.preloadTimeout = setTimeout(() => {
       this.preload('medium')

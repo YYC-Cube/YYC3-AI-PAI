@@ -210,7 +210,7 @@ export const useCRDTCollabStore = create<CollabState & CollabStoreActions>()(
         console.error('[CRDT] Failed to load user info:', error)
       }
 
-      console.warn('[CRDT] Collaboration system initialized')
+      if (import.meta.env.DEV) console.warn('[CRDT] Collaboration system initialized')
     },
 
     // 设置连接类型
@@ -437,7 +437,7 @@ export const useCRDTCollabStore = create<CollabState & CollabStoreActions>()(
                 name: state.userName,
                 color: state.userColor,
               },
-            },
+            } as any,
           }
         )
 

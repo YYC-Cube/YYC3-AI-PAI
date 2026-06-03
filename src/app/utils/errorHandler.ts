@@ -84,7 +84,7 @@ export function createError(
   // 🔧 设置错误原因链，以便错误追踪
   const causeError = technicalMessage ? new Error(technicalMessage) : undefined
   if (causeError) {
-    ;(error as Error).cause = causeError
+    ;(error as any).cause = causeError
   }
 
   error.type = type

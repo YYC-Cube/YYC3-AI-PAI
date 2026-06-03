@@ -56,7 +56,7 @@ import { IDETerminal } from "./ide/IDETerminal";
 import { useAutoSave } from "./ide/useAutoSave";
 import { useIDEKeyboard } from "./ide/useIDEKeyboard";
 import { useIDEPanelResize } from "./ide/useIDEPanelResize";
-import { EVENT_TO_PANEL_KEY, useOverlayPanels } from "./ide/useOverlayPanels";
+import { EVENT_TO_PANEL_KEY, useOverlayPanels, type OverlayPanelKey } from "./ide/useOverlayPanels";
 
 // ── Extracted sub-components ──
 import { IDEChatPanel } from "./ide/IDEChatPanel";
@@ -89,6 +89,8 @@ export function IDEMode({ onSwitchMode, onOpenSettings, onOpenNotifications, onO
 
   // ── Consolidated overlay panels ──
   const overlayPanels = useOverlayPanels();
+  const overlayPanelsRef = useRef(overlayPanels);
+  overlayPanelsRef.current = overlayPanels;
   const [fileContextMenu, setFileContextMenu] = useState<{ x: number; y: number; filename: string; isFolder: boolean } | null>(null);
 
   // ── Quick Actions ──
@@ -217,6 +219,33 @@ export function IDEMode({ onSwitchMode, onOpenSettings, onOpenNotifications, onO
     window.addEventListener("yyc3:open-panel", handler);
     return () => window.removeEventListener("yyc3:open-panel", handler);
   }, [overlayPanels]);
+
+  // Escape — close all overlay panels + external panels
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      const panels = overlayPanelsRef.current.panels;
+      const anyOverlayOpen = Object.values(panels).some(Boolean);
+      if (anyOverlayOpen) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        for (const key of Object.keys(panels) as OverlayPanelKey[]) {
+          if (panels[key]) overlayPanelsRef.current.hide(key);
+        }
+        return;
+      }
+      // Close store-based side panels (only if they won't interfere with app-level Escape handling)
+      // Check if there are any input/textarea focused — if so, let default behavior handle it
+      const tag = (e.target as HTMLElement)?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+      dbStoreActions.closePanel();
+      pluginStoreActions.closePanel();
+      cryptoStoreActions.closePanel();
+      offlineStoreActions.closePanel();
+    };
+    window.addEventListener("keydown", handler, true);
+    return () => window.removeEventListener("keydown", handler, true);
+  }, []);
 
   // Sync state → Zustand
   useEffect(() => { ideStore.setLayoutMode(viewMode); }, [viewMode, ideStore]);

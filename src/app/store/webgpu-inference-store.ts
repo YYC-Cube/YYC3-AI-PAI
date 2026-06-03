@@ -455,7 +455,7 @@ export const useWebGPUInferenceStore = create<WebGPUInferenceStoreState & WebGPU
               state.webGPUSupported = true
               state.engineType = 'webgpu'
             })
-            console.warn('[WebGPU] WebGPU initialized successfully')
+            if (import.meta.env.DEV) console.warn('[WebGPU] WebGPU initialized successfully')
             return true
           }
         }
@@ -468,7 +468,7 @@ export const useWebGPUInferenceStore = create<WebGPUInferenceStoreState & WebGPU
             state.webGPUSupported = false
             state.engineType = 'webgl'
           })
-          console.warn('[WebGPU] WebGL available (fallback)')
+          if (import.meta.env.DEV) console.warn('[WebGPU] WebGL available (fallback)')
           return true
         }
 
@@ -477,7 +477,7 @@ export const useWebGPUInferenceStore = create<WebGPUInferenceStoreState & WebGPU
           state.webGPUSupported = false
           state.engineType = 'wasm'
         })
-        console.warn('[WebGPU] WASM mode (fallback)')
+        if (import.meta.env.DEV) console.warn('[WebGPU] WASM mode (fallback)')
         return true
       } catch (error) {
         console.error('[WebGPU] Initialization failed:', error)
@@ -610,7 +610,7 @@ export const useWebGPUInferenceStore = create<WebGPUInferenceStoreState & WebGPU
         })
         state.activeModelId = null
       })
-      console.warn('[WebGPU] All models unloaded')
+      if (import.meta.env.DEV) console.warn('[WebGPU] All models unloaded')
     },
 
     // 设置激活模型
