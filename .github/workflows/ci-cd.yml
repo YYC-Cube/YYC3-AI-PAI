@@ -8,9 +8,9 @@ on:
   workflow_dispatch:
     inputs:
       deploy_environment:
-        description: 'Deployment environment'
+        description: "Deployment environment"
         required: true
-        default: 'production'
+        default: "production"
         type: choice
         options:
           - production
@@ -26,8 +26,8 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  NODE_VERSION: '20'
-  PNPM_VERSION: '9'
+  NODE_VERSION: "20"
+  PNPM_VERSION: "9"
 
 jobs:
   # ===== Code Quality =====
@@ -125,10 +125,13 @@ jobs:
 
       - name: Create GitHub Pages package
         run: |
-          echo "📦 Creating GitHub Pages package..."
+          echo "📦 Creating GitHub Pages artifact..."
+          # Use tar to copy — avoids cp -r symlink/hardlink preservation
           mkdir -p github-pages-dist
-          cp -r dist/index.html dist/assets github-pages-dist/
-          echo "✅ GitHub Pages package created"
+          tar cf - -C dist index.html assets | tar xf - -C github-pages-dist
+          # Remove any symlinks that would cause deploy-pages to reject
+          find github-pages-dist -type l -delete 2>/dev/null || true
+          echo "✅ GitHub Pages package ready"
 
       - name: Upload GitHub Pages artifacts
         uses: actions/upload-artifact@v4
