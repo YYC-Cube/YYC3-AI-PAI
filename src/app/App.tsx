@@ -25,7 +25,7 @@ import { PRELOAD_STRATEGIES, useAutoMonacoPreload } from "./services/monaco-prel
 import { ModelStoreProvider, useModelStore } from "./store/model-store";
 import { panelDnDActions } from "./store/panel-dnd-store";
 import { useShortcutStore } from "./store/shortcut-store";
-import { useThemeStore } from "./store/theme-store";
+import { Z_INDEX, useThemeStore } from "./store/theme-store";
 
 // ===== Eager imports — main views (critical rendering path) =====
 import { FullscreenMode } from "./components/FullscreenMode";
@@ -47,6 +47,7 @@ const AgentWorkflowPanel = lazy(() => import("./components/AgentWorkflowPanel").
 
 // Type-only import (erased at compile time)
 import type { PaletteCommand } from "./components/CommandPalette";
+import { ChatPanel } from "./components/chat/ChatPanel";
 
 // ===== Monaco Editor Type Definition =====
 interface MonacoEditorRef {
@@ -60,7 +61,7 @@ interface MonacoEditorRef {
 }
 
 import {
-  Activity, AlertTriangle,
+  Activity, AlertTriangle, MessageSquare,
   Bell,
   Bot,
   Brain,
@@ -132,6 +133,9 @@ function AppContent() {
 
   // WebGPU AI Assistant panel state
   const [aiAssistantVisible, setAIAssistantVisible] = useState(false);
+
+  // Chat panel state
+  const [chatVisible, setChatVisible] = useState(false);
 
   // CRDT Collaboration panel state
   const [crdtCollabVisible, setCRDTCollabVisible] = useState(false);
@@ -300,6 +304,11 @@ function AppContent() {
       action: () => setAIAssistantVisible(true),
     },
     {
+      id: 'open-chat', labelKey: 'cmdOpenChat', categoryKey: 'catAI',
+      icon: MessageSquare, shortcut: '⌘ Shift C',
+      action: () => setChatVisible(true),
+    },
+    {
       id: 'open-crdt-collab', labelKey: 'cmdOpenCRDTCollab', categoryKey: 'catTools',
       icon: Users, shortcut: '⌘ Shift C',
       action: () => setCRDTCollabVisible(true),
@@ -383,6 +392,8 @@ function AppContent() {
     // Agent Workflow — use mod+shift+o to avoid collision with aiAssist (mod+shift+a)
     { keys: shortcuts.agentWorkflow?.internal ?? 'mod+shift+o', action: () => setAgentWorkflowVisible(v => !v) },
     { keys: shortcuts.newProject?.internal ?? 'mod+shift+n', action: () => { setMode('ide'); window.dispatchEvent(new CustomEvent('yyc3:open-panel', { detail: 'newProject' })) } },
+    // Chat panel
+    { keys: 'mod+shift+c', action: () => setChatVisible(v => !v) },
     // Shortcut cheat sheet
     { keys: shortcuts.shortcutCheatSheet?.internal ?? 'mod+/', action: () => setCheatSheetVisible(v => !v) },
     {
@@ -397,6 +408,7 @@ function AppContent() {
         else if (crdtCollabVisible) setCRDTCollabVisible(false)
         else if (intelligentWorkflowVisible) setIntelligentWorkflowVisible(false)
         else if (agentWorkflowVisible) setAgentWorkflowVisible(false)
+        else if (chatVisible) setChatVisible(false)
       }, preventDefault: false
     },
   ]);
@@ -549,6 +561,29 @@ function AppContent() {
       <Suspense fallback={<PanelSkeleton />}>
         <AgentWorkflowPanel />
       </Suspense>
+
+      {/* Chat Panel */}
+      {chatVisible && (
+        <div className="fixed inset-0" style={{ zIndex: Z_INDEX.topModal + 50 }}>
+          <div
+            className="absolute inset-0"
+            style={{ background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)' }}
+            onClick={() => setChatVisible(false)}
+          />
+          <div className="absolute inset-0 flex items-center justify-center p-8">
+            <div
+              className="w-full max-w-4xl h-[80vh] rounded-lg overflow-hidden flex flex-col"
+              style={{
+                background: tokens.background,
+                border: `1px solid ${tokens.cardBorder}`,
+                boxShadow: isCyberpunk ? `0 0 40px ${tokens.primaryGlow}` : tokens.shadowHover,
+              }}
+            >
+              <ChatPanel />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

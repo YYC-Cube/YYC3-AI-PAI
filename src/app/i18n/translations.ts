@@ -498,6 +498,7 @@ export const translations = {
     cmdKeyboardShortcuts: { zh: "显示键盘快捷键", en: "Show Keyboard Shortcuts" },
     cmdOpenNotifications: { zh: "打开通知中心", en: "Open Notification Center" },
     cmdToggleCollab: { zh: "切换协同编辑面板", en: "Toggle Collab Panel" },
+    cmdOpenChat: { zh: "打开 AI 对话", en: "Open AI Chat" },
     // New MVP expansion commands
     cmdOpenGitPanel: { zh: "打开 Git 面板", en: "Open Git Panel" },
     cmdOpenPerformance: { zh: "打开性能监控", en: "Open Performance Monitor" },

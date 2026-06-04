@@ -279,7 +279,17 @@ export interface FileNode {
 
 // ===== Chat Types =====
 export interface ChatMessage {
+  id?: string
   role: 'user' | 'ai'
   content: string
+  folded?: boolean
   timestamp?: string
+}
+
+export interface ChatSession {
+  sid: string
+  title: string
+  createAt: number
+  updateAt: number
+  list: ChatMessage[]
 }
