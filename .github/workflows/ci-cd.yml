@@ -123,30 +123,10 @@ jobs:
           path: dist/
           retention-days: 7
 
-      - name: Create GitHub Pages package
-        run: |
-          echo "📦 Creating GitHub Pages artifact..."
-          mkdir -p github-pages-dist
-          # Copy each file individually with cp -L (dereference symlinks).
-          # cp creates a new inode by default, which also breaks hard links.
-          # This guarantees zero symlinks and zero hard links in the artifact.
-          cp -L dist/index.html github-pages-dist/
-          find dist/assets -type f -exec sh -c '
-            for f; do
-              dest="github-pages-dist/assets/${f#dist/assets/}"
-              mkdir -p "$(dirname "$dest")"
-              cp -L "$f" "$dest"
-            done
-          ' _ {} +
-          echo "✅ GitHub Pages package ready — $(find github-pages-dist -type f | wc -l) files"
-          find github-pages-dist -type f | sort
-
-      - name: Upload GitHub Pages artifacts
-        uses: actions/upload-artifact@v4
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          name: github-pages
-          path: github-pages-dist/
-          retention-days: 1
+          path: dist/
 
   # ===== Deploy to Production =====
   deploy-production:
@@ -265,7 +245,7 @@ jobs:
             📦 YYC³ AI-PAI
             🌐 https://ai-pai.yyc3.top
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
 
   # ===== GitHub Pages Deployment (Fallback) =====
   deploy-github-pages:
