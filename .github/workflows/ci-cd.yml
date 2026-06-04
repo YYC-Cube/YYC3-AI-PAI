@@ -126,12 +126,20 @@ jobs:
       - name: Create GitHub Pages package
         run: |
           echo "📦 Creating GitHub Pages artifact..."
-          # Use tar to copy — avoids cp -r symlink/hardlink preservation
           mkdir -p github-pages-dist
-          tar cf - -C dist index.html assets | tar xf - -C github-pages-dist
-          # Remove any symlinks that would cause deploy-pages to reject
-          find github-pages-dist -type l -delete 2>/dev/null || true
-          echo "✅ GitHub Pages package ready"
+          # Copy each file individually with cp -L (dereference symlinks).
+          # cp creates a new inode by default, which also breaks hard links.
+          # This guarantees zero symlinks and zero hard links in the artifact.
+          cp -L dist/index.html github-pages-dist/
+          find dist/assets -type f -exec sh -c '
+            for f; do
+              dest="github-pages-dist/assets/${f#dist/assets/}"
+              mkdir -p "$(dirname "$dest")"
+              cp -L "$f" "$dest"
+            done
+          ' _ {} +
+          echo "✅ GitHub Pages package ready — $(find github-pages-dist -type f | wc -l) files"
+          find github-pages-dist -type f | sort
 
       - name: Upload GitHub Pages artifacts
         uses: actions/upload-artifact@v4
@@ -257,7 +265,7 @@ jobs:
             📦 YYC³ AI-PAI
             🌐 https://ai-pai.yyc3.top
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   # ===== GitHub Pages Deployment (Fallback) =====
   deploy-github-pages:
@@ -269,12 +277,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Download GitHub Pages artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: github-pages
-          path: dist/
-
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
